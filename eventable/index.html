@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Eventable</title>
+        <style>
+            * {
+                touch-action: manipulation;
+            }
+            body {
+                font-family: sans-serif;
+                background-color: black;
+                padding: 5dvh 5dvw;
+                margin: 0;
+                box-sizing: border-box;
+                width: 100dvw;
+                height: 100dvh;
+                color: white;
+                display: flex;
+                flex-direction: column;
+                gap: 5dvh;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+            }
+            .targets {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 2ch;
+            }
+            .target {
+                max-width: 10ch;
+                flex-grow: 1;
+                aspect-ratio: 1;
+                background-color: gray;
+                border-radius: 50%;
+                border: 4px solid transparent;
+                user-select: none;
+                -webkit-user-select: none;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                box-sizing: border-box;
+            }
+            .target:active {
+                border: 4px solid white;
+            }
+            table {
+                margin: 0;
+                padding: 0;
+                color: white;
+                width: 30ch;
+                font-size: 1.1rem;
+                font-family: monospace;
+            }
+            th {
+                text-align: start;
+                border-bottom: 1px solid white;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="targets">
+            <div class="target" data-number="1">1</div>
+            <div class="target" data-number="2">2</div>
+            <div class="target" data-number="3">3</div>
+            <div class="target" data-number="4">4</div>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Type</th>
+                    <th>x</th>
+                    <th>y</th>
+                    <th>#</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <script>
+            const LIST_LENGTH = 10;
+
+            function pushEvent(event) {
+                const tbody = document.querySelector("tbody");
+                if (tbody.childNodes.length >= LIST_LENGTH) {
+                    tbody.removeChild(tbody.lastChild);
+                }
+
+                const tr = document.createElement("tr");
+
+                const tdTimestamp = document.createElement("td");
+                const tdType = document.createElement("td");
+                const tdPageX = document.createElement("td");
+                const tdPageY = document.createElement("td");
+                const tdNumber = document.createElement("td");
+
+                if (!event) {
+                    tdTimestamp.innerText = "-";
+                    tdType.innerText = "-";
+                    tdPageX.innerText = "-";
+                    tdPageY.innerText = "-";
+                    tdNumber.innerText = "-";
+                } else {
+                    tdTimestamp.innerText = String(
+                        event.timeStamp.toFixed(0)
+                    ).padStart(8, "0");
+                    tdType.innerText = event.type;
+                    tdPageX.innerText = event.pageX;
+                    tdPageY.innerText = event.pageY;
+                    tdNumber.innerText = event.target.dataset.number;
+                }
+
+                tr.appendChild(tdTimestamp);
+                tr.appendChild(tdType);
+                tr.appendChild(tdPageX);
+                tr.appendChild(tdPageY);
+                tr.appendChild(tdNumber);
+
+                tbody.prepend(tr);
+            }
+
+            const eventNames = [
+                "click",
+                "dblclick",
+                "mousedown",
+                "mouseenter",
+                "mouseleave",
+                "mousemove",
+                "mouseout",
+                "mouseup",
+                "touchcancel",
+                "touchend",
+                "touchmove",
+                "touchstart",
+            ];
+
+            for (const name of eventNames) {
+                document
+                    .querySelectorAll(".target")
+                    .forEach((target) =>
+                        target.addEventListener(name, pushEvent, {
+                            passive: true,
+                        })
+                    );
+            }
+
+            // Add some filler items
+            Array(LIST_LENGTH)
+                .fill(null)
+                .forEach(() => pushEvent(null));
+        </script>
+    </body>
+</html>
