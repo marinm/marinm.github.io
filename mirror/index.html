@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Mirror</title>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: black;
+            }
+
+            video {
+                padding: 0;
+                margin: 0;
+                height: 100vh;
+                width: 100vw;
+                background-color: black;
+                object-fit: cover;
+                color: white;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="error"></div>
+        <video id="video" playsinline>Video stream not available.</video>
+
+        <script>
+            navigator.mediaDevices
+                .getUserMedia({ video: true, audio: false })
+                .then(function (stream) {
+                    const video = document.getElementById("video");
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch((e) => {
+                    document.getElementById("error").innerText = "Error";
+                });
+        </script>
+    </body>
+</html>
