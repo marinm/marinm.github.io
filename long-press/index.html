@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Long-press</title>
+        <style>
+            * {
+                user-select: none;
+                -webkit-user-select: none;
+            }
+            body {
+                background-color: black;
+                padding: 0;
+                margin: 0;
+                width: 100dvw;
+                height: 100dvh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+            }
+            .target {
+                width: 10ch;
+                height: 10ch;
+                background-color: gray;
+                border-radius: 50%;
+            }
+            .long-press-start {
+                background-color: green;
+            }
+            .long-press-cancel {
+                background-color: red;
+            }
+            .long-press-end {
+                background-color: lime;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="target"></div>
+        <script>
+            function longPressable({ holdTime, selector }) {
+                // Closure state
+                const target = document.querySelector(selector);
+                let timeoutId = null;
+
+                // Let the value of timeoutId indicate if LongPressEnd has fired
+
+                function timeoutEnd() {
+                    clearTimeout(timeoutId);
+                    timeoutId = null;
+                    target.dispatchEvent(
+                        new CustomEvent("longpressend", {
+                            detail: { holdTime },
+                        })
+                    );
+                }
+
+                function onMouseDown() {
+                    // If for some reason the timer is already set, do nothing. This
+                    // shouldn't happen.
+                    if (timeoutId !== null) {
+                        console.error("LongPress: error");
+                        clearTimeout(timeoutId);
+                        return;
+                    }
+                    timeoutId = setTimeout(timeoutEnd, holdTime);
+                    target.dispatchEvent(
+                        new CustomEvent("longpressstart", {
+                            detail: { holdTime },
+                        })
+                    );
+                }
+
+                function onMouseUp() {
+                    if (timeoutId === null) {
+                        return;
+                    }
+
+                    clearTimeout(timeoutId);
+                    timeoutId = null;
+                    target.dispatchEvent(
+                        new CustomEvent("longpresscancel", {
+                            detail: { holdTime },
+                        })
+                    );
+                }
+
+                if ("ontouchstart" in window) {
+                    target.addEventListener("touchstart", onMouseDown);
+                    target.addEventListener("touchend", onMouseUp);
+                } else {
+                    target.addEventListener("mousedown", onMouseDown);
+                    target.addEventListener("mouseup", onMouseUp);
+                }
+            }
+
+            const target = document.querySelector(".target");
+
+            function briefClass(target, className, duration) {
+                target.classList.add(className);
+                setTimeout(() => target.classList.remove(className), duration);
+            }
+
+            target.addEventListener("longpressstart", (event) => {
+                target.classList.remove("long-press-cancel");
+                target.classList.remove("long-press-end");
+                target.classList.add("long-press-start");
+            });
+
+            target.addEventListener("longpresscancel", () => {
+                target.classList.remove("long-press-start");
+                target.classList.remove("long-press-end");
+                briefClass(target, "long-press-cancel", 500);
+            });
+
+            target.addEventListener("longpressend", () => {
+                target.classList.remove("long-press-start");
+                target.classList.remove("long-press-cancel");
+                briefClass(target, "long-press-end", 500);
+            });
+
+            longPressable({ holdTime: 1000, selector: ".target" });
+        </script>
+    </body>
+</html>
