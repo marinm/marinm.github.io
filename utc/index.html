@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>UTC</title>
+        <style>
+            body {
+                background-color: black;
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+                width: 100dvw;
+                height: 100dvh;
+                color: white;
+                font-family: monospace;
+                display: flex;
+                flex-direction: column;
+                gap: 1ch;
+                justify-content: center;
+                align-items: center;
+            }
+        </style>
+    </head>
+    <body>
+        UTC
+        <div id="timestamp"></div>
+        <script>
+            setInterval(() => {
+                document.querySelector("#timestamp").innerText = Date.now();
+            }, 100);
+        </script>
+    </body>
+</html>
