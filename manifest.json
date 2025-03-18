@@ -1,0 +1,16 @@
+{
+	"name": "T-shirt cannon",
+	"short_name": "T-shirt cannon",
+	"display": "standalone",
+	"description": "Experiments with HTML, CSS, JavaScript",
+	"theme_color": "transparent",
+	"background_color": "#000000",
+	"start_url": ".",
+	"icons": [
+		{
+			"src": "/icon.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	]
+}
