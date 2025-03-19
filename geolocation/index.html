@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="manifest" href="manifest.json" />
+        <title>Geolocation</title>
+
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                background-color: black;
+                color: white;
+                font-family: monospace;
+                display: flex;
+                flex-direction: column;
+                gap: 5ch;
+                justify-content: center;
+                align-items: center;
+                width: 100dvw;
+                height: 100dvh;
+                padding: 2ch;
+                margin: 0;
+                font-size: 1rem;
+            }
+            table {
+                padding: 0;
+                margin: 0;
+                border-collapse: collapse;
+                width: fit-content;
+                max-width: 100%;
+            }
+            td {
+                padding: 0.5ch 0;
+            }
+            td:first-child {
+                max-width: 22ch;
+            }
+            td:nth-child(2) {
+                width: 22ch;
+                padding-left: 2ch;
+                text-align: right;
+            }
+        </style>
+    </head>
+    <body onclick="locate()">
+        <div id="message">Tap to locate</div>
+        <table>
+            <tbody>
+                <tr>
+                    <td>Latitude</td>
+                    <td id="latitude">-</td>
+                </tr>
+                <tr>
+                    <td>Longitude</td>
+                    <td id="longitude">-</td>
+                </tr>
+                <tr>
+                    <td>Altitude</td>
+                    <td id="altitude">-</td>
+                </tr>
+                <tr>
+                    <td>Heading</td>
+                    <td id="heading">-</td>
+                </tr>
+                <tr>
+                    <td>Speed</td>
+                    <td id="speed">-</td>
+                </tr>
+                <tr>
+                    <td>Timestamp</td>
+                    <td id="timestamp">-</td>
+                </tr>
+            </tbody>
+        </table>
+        <script>
+            // Sometimes the real delay is slow enough to cause a visible change
+            // but too fast to read, so it looks like a sutter. Force a minimum
+            // delay in rendering to hint that an update actually happened.
+            const MIN_DELAY = 667;
+            let requestedAt = 0;
+            let inProgress = false;
+
+            function $(selector) {
+                return document.querySelector(selector);
+            }
+
+            function setMessage(text) {
+                $("#message").textContent = text;
+            }
+
+            function reset() {
+                $("#latitude").textContent = "-";
+                $("#longitude").textContent = "-";
+                $("#altitude").textContent = "-";
+                $("#heading").textContent = "-";
+                $("#speed").textContent = "-";
+                $("#timestamp").textContent = "-";
+            }
+
+            function displayData(position) {
+                $(
+                    "#latitude"
+                ).textContent = `${position.coords.latitude.toFixed(
+                    5
+                )} °N ± ${position.coords.accuracy.toFixed(0)} m`;
+
+                $(
+                    "#longitude"
+                ).textContent = `${position.coords.longitude.toFixed(
+                    5
+                )} °E ± ${position.coords.accuracy.toFixed(0)} m`;
+
+                $("#altitude").textContent =
+                    position.coords.altitude === null
+                        ? "not available"
+                        : `${position.coords.altitude.toFixed(
+                              0
+                          )} m ± ${position.coords.altitudeAccuracy.toFixed(
+                              0
+                          )} m`;
+
+                $("#heading").textContent =
+                    position.coords.heading === null
+                        ? "not available"
+                        : position.coords.heading.toFixed(0) + " °";
+
+                $("#speed").textContent =
+                    position.coords.speed === null
+                        ? "not available"
+                        : position.coords.speed.toFixed(1) + " m/s";
+
+                $("#timestamp").textContent = position.timestamp + " ms";
+            }
+
+            function onSuccess(position) {
+                const wait = Math.max(requestedAt + MIN_DELAY - Date.now(), 0);
+                setTimeout(() => {
+                    inProgress = false;
+                    setMessage("Tap to locate");
+                    displayData(position);
+                }, wait);
+            }
+
+            function onError(error) {
+                inProgress = false;
+                reset();
+                setMessage(`Error: ${error.message}`);
+            }
+
+            function locate() {
+                if (inProgress) {
+                    return;
+                }
+
+                if (!navigator.geolocation) {
+                    setMessage("Not available");
+                    return;
+                }
+
+                inProgress = true;
+                requestedAt = Date.now();
+                reset();
+                setMessage("Locating...");
+                navigator.geolocation.getCurrentPosition(onSuccess, onError);
+            }
+        </script>
+    </body>
+</html>
