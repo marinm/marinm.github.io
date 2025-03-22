@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>MouseEvent</title>
+        <style>
+            body {
+                padding: 10ch 2ch;
+                margin: 0;
+                font-family: sans-serif;
+                background-color: black;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 5ch;
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        Click anywhere
+
+        <table></table>
+
+        <script>
+            function $(selector) {
+                return document.querySelector(selector);
+            }
+
+            document.addEventListener("click", onClick);
+
+            const properties = [
+                "isTrusted",
+                "altKey",
+                "altitudeAngle",
+                "azimuthAngle",
+                "bubbles",
+                "button",
+                "buttons",
+                "cancelBubble",
+                "cancelable",
+                "clientX",
+                "clientY",
+                "composed",
+                "ctrlKey",
+                "currentTarget",
+                "defaultPrevented",
+                "detail",
+                "eventPhase",
+                "fromElement",
+                "height",
+                "isPrimary",
+                "layerX",
+                "layerY",
+                "metaKey",
+                "movementX",
+                "movementY",
+                "offsetX",
+                "offsetY",
+                "pageX",
+                "pageY",
+                "persistentDeviceId",
+                "pointerId",
+                "pointerType",
+                "pressure",
+                "relatedTarget",
+                "returnValue",
+                "screenX",
+                "screenY",
+                "shiftKey",
+                "sourceCapabilities",
+                "srcElement",
+                "tangentialPressure",
+                "target",
+                "tiltX",
+                "tiltY",
+                "timeStamp",
+                "toElement",
+                "twist",
+                "type",
+                "view",
+                "which",
+                "width",
+                "x",
+                "y",
+            ];
+
+            onClick({});
+
+            function onClick(event) {
+                console.log(event);
+                renderRows([
+                    ["event.constructor.name", event.constructor.name],
+                    ...properties.map((p) => [p, event[p] ?? "-"]),
+                ]);
+            }
+
+            function renderRows(entries) {
+                $("table").innerHTML = "";
+                for (const entry of entries) {
+                    $("table").appendChild(row(entry));
+                }
+            }
+
+            function row([name, value]) {
+                const tr = document.createElement("tr");
+
+                const nameTd = document.createElement("td");
+                const valueTd = document.createElement("td");
+
+                nameTd.innerText = name;
+                valueTd.innerText = value;
+
+                tr.appendChild(nameTd);
+                tr.appendChild(valueTd);
+
+                return tr;
+            }
+        </script>
+    </body>
+</html>
