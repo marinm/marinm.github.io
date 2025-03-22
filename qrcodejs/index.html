@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cross-Browser QRCode generator for Javascript</title>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width,initial-scale=1,user-scalable=no"
+        />
+        <link rel="manifest" href="manifest.json" />
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                background-color: white;
+                margin: 0 auto;
+                padding: 10mm;
+                width: 100vw;
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: start;
+            }
+
+            #container {
+                width: 100%;
+                max-width: 100mm;
+                display: flex;
+                flex-direction: column;
+                justify-content: start;
+                align-items: center;
+                gap: 10mm;
+            }
+
+            textarea {
+                font-size: 1rem;
+                padding: 2mm;
+                width: 100%;
+                border: 1px solid #aaaaaa;
+                padding: 2mm;
+                border-radius: 1mm;
+                height: 5rem;
+                overflow-wrap: break-word;
+            }
+
+            #qrcode {
+                width: fit-content;
+                height: fit-content;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <div id="qrcode"></div>
+            <textarea id="text" type="text" spellcheck="false">
+https://marinm.net/</textarea
+            >
+        </div>
+
+        <script src="qrcode.js"></script>
+        <script>
+            const container = document.getElementById("container");
+            const input = document.getElementById("text");
+            const output = document.getElementById("qrcode");
+
+            const qrcode = new QRCode(output, {
+                width: container.clientWidth,
+                height: container.clientWidth,
+            });
+
+            function makeCode() {
+                const text = input.value;
+                if (!text) {
+                    input.focus();
+                    return;
+                }
+                qrcode.makeCode(text);
+            }
+
+            input.addEventListener("blur", makeCode);
+
+            makeCode();
+        </script>
+    </body>
+</html>
