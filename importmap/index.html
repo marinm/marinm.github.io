@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>importmap</title>
+		<style>
+			body {
+				background-color: silver;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-family: sans-serif;
+				padding: 0;
+				margin: 0;
+				box-sizing: border-box;
+				width: 100dvw;
+				height: 100dvh;
+			}
+		</style>
+    </head>
+    <body>
+		<a href="">
+			Learn more about importmaps on mdn
+		</a>
+        <script type="importmap">
+            {
+                "imports": {
+                    "links": "./modules/links/links.js"
+                }
+            }
+        </script>
+		<script type="module">
+			import links from "links";
+
+			document.querySelector("a").href = links.importmap;
+		</script>
+    </body>
+</html>
