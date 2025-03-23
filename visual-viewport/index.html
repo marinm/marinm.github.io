@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Visual Viewport API</title>
+        <style>
+            body {
+                background-color: silver;
+                display: flex;
+                flex-direction: column;
+                justify-content: start;
+                align-items: start;
+                font-family: sans-serif;
+                padding: 1em;
+                margin: 0;
+                box-sizing: border-box;
+                width: 150vw;
+                height: 150vh;
+                border: 2px solid orange;
+            }
+            #output {
+                position: sticky;
+                top: 1em;
+                left: 1em;
+                border: solid 1px green;
+                background: lime;
+                padding: 5px;
+            }
+        </style>
+    </head>
+    <body>
+		<!-- Read more about the Visual Viewport API -->
+		<!-- https://developer.mozilla.org/en-US/docs/Web/API/Visual_Viewport_API -->
+        <div id="instructions">
+            <p>
+                Try scrolling around and pinch-zooming to see how the reported
+                values change.
+            </p>
+        </div>
+
+        <div id="output">
+            <p id="visual-info"></p>
+            <hr />
+            <p id="window-info"></p>
+        </div>
+    </body>
+    <script defer>
+        const output = document.getElementById("output");
+        const visualInfo = document.getElementById("visual-info");
+        const windowInfo = document.getElementById("window-info");
+
+        const scrollUpdater = () => {
+            output.style.top = `${visualViewport.offsetTop + 10}px`;
+            output.style.left = `${visualViewport.offsetLeft + 10}px`;
+            output.style.background = "yellow";
+            updateText();
+        };
+
+        const scrollendUpdater = () => {
+            output.style.background = "lime";
+            updateText();
+        };
+
+        function updateText() {
+            visualInfo.innerText =
+                `Visual viewport ` +
+                `left: ${window.visualViewport.offsetLeft.toFixed(2)} ` +
+                `top: ${window.visualViewport.offsetTop.toFixed(2)}`;
+
+            windowInfo.innerText =
+                `Window ` +
+                `scrollX: ${window.scrollX.toFixed(2)} ` +
+                `scrollY: ${window.scrollY.toFixed(2)}`;
+        }
+
+        updateText();
+
+        visualViewport.onresize = scrollUpdater;
+        visualViewport.onscroll = scrollUpdater;
+        visualViewport.onscrollend = scrollendUpdater;
+        window.onresize = scrollUpdater;
+        window.onscroll = scrollUpdater;
+        window.onscrollend = scrollendUpdater;
+    </script>
+</html>
