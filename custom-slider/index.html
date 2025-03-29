@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Custom slider</title>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                background-color: silver;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 10vh;
+                font-family: sans-serif;
+                padding: 1em;
+                margin: 0;
+                box-sizing: border-box;
+                width: 100dvw;
+                height: 100dvh;
+                overflow: hidden;
+            }
+            .slider {
+                width: 4em;
+                aspect-ratio: 1 / 4;
+                border-radius: 1em;
+                background-color: white;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                justify-content: end;
+                align-items: center;
+                position: relative;
+            }
+            .slider,
+            .slider > * {
+                user-select: none;
+                -webkit-user-select: none;
+            }
+            .slider-level {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: end;
+                align-items: center;
+                padding-bottom: 1em;
+                position: absolute;
+            }
+            .slider-fill {
+                width: 100%;
+                background-color: lime;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="slider">
+            <div class="slider-level"></div>
+            <div class="slider-fill"></div>
+        </div>
+
+        <script>
+            const slider = document.querySelector(".slider");
+            const sliderFill = slider.querySelector(".slider-fill");
+            const sliderLevel = slider.querySelector(".slider-level");
+            const sliderHeight = slider.offsetHeight;
+
+            let level = 0.1;
+            let prevOffsetY = null;
+
+            slider.onpointerdown = beginSliding;
+            slider.onpointerup = endSliding;
+
+            function beginSliding(event) {
+                slider.setPointerCapture(event.pointerId);
+                slider.onpointermove = slide;
+                prevOffsetY = event.offsetY;
+            }
+
+            function slide(event) {
+                const pixelDiff = event.offsetY - prevOffsetY;
+                prevOffsetY = event.offsetY;
+
+                const levelDiff = pixelDiff / sliderHeight;
+
+                // Subtract, because the y-coordinate increases in the opposite
+                // direction to the slider control
+                level = level - levelDiff;
+
+                level = Math.max(0.0, level);
+                level = Math.min(level, 1.0);
+
+                render();
+            }
+
+            function endSliding(event) {
+                slider.releasePointerCapture(event.pointerId);
+                slider.onpointermove = null;
+                prevOffsetY = null;
+            }
+
+            function render() {
+                sliderLevel.innerText = `${Math.round(level * 100)}`;
+                sliderFill.style.height = `${level * sliderHeight}px`;
+            }
+
+            render();
+        </script>
+    </body>
+</html>
