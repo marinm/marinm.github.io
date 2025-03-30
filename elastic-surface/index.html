@@ -27,8 +27,8 @@
             }
             .slider-boundary {
                 position: relative;
-                width: 4em;
-                height: 16em;
+                width: 8em;
+                height: 18em;
             }
             .slider {
                 position: absolute;
@@ -53,15 +53,18 @@
         </div>
 
         <script>
-            const MAX_RELATIVE_HEIGHT_DIFF = 0.15;
-            const MAX_RELATIVE_WIDTH_DIFF = 0.05;
+            const MAX_RELATIVE_HEIGHT_DIFF = 0.10;
+            const MAX_RELATIVE_WIDTH_DIFF = 0.02;
+            const MAX_RADIUS_MULTIPLIER = 0.03;
+            const RADIUS_MULTIPLIER = 0.30;
+            const DRAG_MULTIPLIER = 0.30;
 
             const sliderBoundary = document.querySelector(".slider-boundary");
             const slider = document.querySelector(".slider");
 
             const restHeight = slider.offsetHeight;
             const restWidth = slider.offsetWidth;
-            const restRadius = restWidth * 0.2;
+            const restRadius = restWidth * RADIUS_MULTIPLIER;
 
             slider.style.borderRadius = restRadius;
 
@@ -93,7 +96,9 @@
                 const pixelDiff = event.offsetY - prevOffsetY;
                 prevOffsetY = event.offsetY;
 
-                const levelDiff = pixelDiff / maxHeightPixelDiff;
+                const dragMultiplier = (1 - Math.abs(level)) * DRAG_MULTIPLIER;
+
+                const levelDiff = (pixelDiff / maxHeightPixelDiff) * dragMultiplier;
 
                 // Subtract, because the y-coordinate increases in the opposite
                 // direction to the slider control
@@ -114,7 +119,7 @@
 				// because we only want these transitions upon slider relase,
 				// not while the slider is being moved manually.
                 slider.style.transition =
-                    "width 100ms, height 250ms, left 100ms, border-radius 500ms";
+                    "width 500ms, height 500ms, left 500ms, border-radius 500ms";
                 slider.style.height = "100%";
                 slider.style.width = "100%";
                 slider.style.left = "0px";
@@ -126,8 +131,6 @@
             }
 
             function render() {
-                slider.innerText = `${level.toFixed(2)}`;
-
                 const absLevel = Math.abs(level);
 
                 const widthDiff = absLevel * maxWidthPixelDiff;
@@ -139,7 +142,7 @@
                 slider.style.left = `${widthDiff / 2}px`;
 
                 slider.style.borderRadius = `${
-                    restRadius + absLevel * restRadius * 0.4
+                    restRadius + absLevel * restRadius * MAX_RADIUS_MULTIPLIER
                 }px`;
 
                 if (level === 0) {
