@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Custom slider</title>
+        <style>
+            * {
+                box-sizing: border-box;
+                user-select: none;
+                -webkit-user-select: none;
+            }
+            body {
+                background-color: silver;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 10vh;
+                font-family: sans-serif;
+                padding: 1em;
+                margin: 0;
+                box-sizing: border-box;
+                width: 100dvw;
+                height: 100dvh;
+                overflow: hidden;
+            }
+            .slider-boundary {
+                position: relative;
+                width: 6em;
+                height: 10em;
+            }
+            .slider {
+                position: absolute;
+                top: 0;
+                left: 0;
+                background-color: gray;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                justify-content: end;
+                align-items: center;
+                width: 100%;
+                height: 100%;
+            }
+            .slider-fill {
+                width: 100%;
+                background-color: lime;
+            }
+            .slider-level {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: end;
+                align-items: center;
+                padding-bottom: 25%;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="slider-boundary">
+            <div class="slider">
+                <div class="slider-fill"></div>
+                <div class="slider-level"></div>
+            </div>
+        </div>
+
+        <script>
+            const INITIAL_LEVEL = 0.3;
+            const MAX_HEIGHT_STRETCH = 0.15;
+            const MAX_WIDTH_STRETCH = 0.02;
+            const MAX_RADIUS_STRETCH = 0.03;
+            const RADIUS_MULTIPLIER = 0.3;
+            const DRAG_MULTIPLIER = 1.0;
+
+            const sliderBoundary = document.querySelector(".slider-boundary");
+            const slider = document.querySelector(".slider");
+            const sliderFill = document.querySelector(".slider-fill");
+            const sliderLevel = document.querySelector(".slider-level");
+
+            const restHeight = slider.offsetHeight;
+            const restWidth = slider.offsetWidth;
+            const restRadius = restWidth * RADIUS_MULTIPLIER;
+
+            slider.style.borderRadius = restRadius;
+
+            const maxHeight = restHeight * (1 + MAX_HEIGHT_STRETCH);
+            const maxHeightPixelDiff = restHeight * MAX_HEIGHT_STRETCH;
+            const maxWidthPixelDiff = restWidth * MAX_WIDTH_STRETCH;
+
+            let level = INITIAL_LEVEL;
+            let stretchLevel = 0.0;
+            let prevOffsetY = null;
+            let isSliding = false;
+
+            sliderBoundary.onpointerdown = beginSliding;
+            sliderBoundary.onpointerup = endSliding;
+
+            function beginSliding(event) {
+                if (isSliding) {
+                    return;
+                }
+                isSliding = true;
+                sliderBoundary.setPointerCapture(event.pointerId);
+                sliderBoundary.onpointermove = slide;
+                prevOffsetY = event.offsetY;
+
+                slider.style.transition = "unset";
+            }
+
+            function slide(event) {
+                const pixelDiff = event.offsetY - prevOffsetY;
+                prevOffsetY = event.offsetY;
+
+                const dragMultiplier =
+                    (1 - Math.abs(stretchLevel) * 0.2) * DRAG_MULTIPLIER;
+
+                const levelDiff = (pixelDiff / restHeight) * dragMultiplier;
+
+                // If stretched, don't adjust the level. Wait until the slider
+                // has returned to rest height.
+                // Subtract, because the y-coordinate increases in the opposite
+                // direction to the slider control.
+                level = stretchLevel > 0 ? level : level - levelDiff;
+
+                level = Math.max(0, level);
+                level = Math.min(level, 1.0);
+
+                const stretchDirection = level === 0.0 ? 1 : -1;
+
+                stretchLevel =
+                    level === 0.0 || level === 1.0
+                        ? stretchLevel + stretchDirection * levelDiff
+                        : 0.0;
+
+                stretchLevel = Math.max(0, stretchLevel);
+                stretchLevel = Math.min(stretchLevel, 1.0);
+
+                render();
+            }
+
+            function endSliding(event) {
+                isSliding = false;
+
+                sliderBoundary.releasePointerCapture(event.pointerId);
+                sliderBoundary.onpointermove = null;
+                prevOffsetY = null;
+
+                // Transitions are set on release, and then unset on slider start,
+                // because we only want these transitions upon slider release,
+                // not while the slider is being moved manually.
+                slider.style.transition =
+                    "width 500ms, height 500ms, left 500ms, border-radius 500ms";
+                slider.style.height = "100%";
+                slider.style.width = "100%";
+                slider.style.left = "0px";
+                slider.style.borderRadius = restRadius;
+                stretchLevel = 0.0;
+
+                render();
+            }
+
+            function render() {
+                sliderLevel.innerText = `${level.toFixed(2)}`;
+
+                // Adjust slider height for stretching
+
+                const widthDiff = stretchLevel * maxWidthPixelDiff;
+                const heightDiff = stretchLevel * maxHeightPixelDiff;
+
+                slider.style.height = `${restHeight + heightDiff}px`;
+                slider.style.width = `${restWidth - widthDiff}px`;
+
+                slider.style.left = `${widthDiff / 2}px`;
+
+                slider.style.borderRadius = `${
+                    restRadius + stretchLevel * restRadius * MAX_RADIUS_STRETCH
+                }px`;
+
+                if (stretchLevel === 0) {
+                    // do nothing
+                } else if (level > 0) {
+                    slider.style.top = "unset";
+                    slider.style.bottom = "0px";
+                } else {
+                    slider.style.top = "0px";
+                    slider.style.bottom = "unset";
+                }
+
+                sliderFill.style.height = `${level * 100}%`;
+            }
+
+            render();
+        </script>
+    </body>
+</html>
