@@ -66,7 +66,6 @@
         <script>
             const INITIAL_LEVEL = 0.3;
             const MAX_HEIGHT_STRETCH = 0.15;
-            const MAX_WIDTH_STRETCH = 0.02;
             const MAX_RADIUS_STRETCH = 0.03;
             const RADIUS_MULTIPLIER = 0.3;
             const DRAG_MULTIPLIER = 1.0;
@@ -78,12 +77,12 @@
             const restHeight = slider.offsetHeight;
             const restWidth = slider.offsetWidth;
             const restRadius = restWidth * RADIUS_MULTIPLIER;
+            const restArea = restHeight * restWidth;
 
             slider.style.borderRadius = restRadius;
 
             const maxHeight = restHeight * (1 + MAX_HEIGHT_STRETCH);
             const maxHeightPixelDiff = restHeight * MAX_HEIGHT_STRETCH;
-            const maxWidthPixelDiff = restWidth * MAX_WIDTH_STRETCH;
 
             let level = INITIAL_LEVEL;
             let stretchLevel = 0.0;
@@ -138,10 +137,11 @@
 
             function endSliding(event) {
                 isSliding = false;
+                prevOffsetY = null;
+                stretchLevel = 0.0;
 
                 sliderBoundary.releasePointerCapture(event.pointerId);
                 sliderBoundary.onpointermove = null;
-                prevOffsetY = null;
 
                 // Transitions are set on release, and then unset on slider start,
                 // because we only want these transitions upon slider release,
@@ -152,7 +152,6 @@
                 slider.style.width = "100%";
                 slider.style.left = "0px";
                 slider.style.borderRadius = restRadius;
-                stretchLevel = 0.0;
 
                 render();
             }
@@ -161,12 +160,15 @@
                 sliderLevel.innerText = `${level.toFixed(2)}`;
 
                 // Adjust slider height for stretching
-
-                const widthDiff = stretchLevel * maxWidthPixelDiff;
                 const heightDiff = stretchLevel * maxHeightPixelDiff;
+                const height = restHeight + heightDiff;
 
-                slider.style.height = `${restHeight + heightDiff}px`;
-                slider.style.width = `${restWidth - widthDiff}px`;
+                // Adjust slider width so rectangular area stays the same
+                const width = restArea / height;
+                const widthDiff = restWidth - width;
+
+                slider.style.height = `${height}px`;
+                slider.style.width = `${width}px`;
 
                 slider.style.left = `${widthDiff / 2}px`;
 
