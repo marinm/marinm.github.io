@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Named colors</title>
+        <style>
+			body {
+				text-align: center;
+			}
+            .poster {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                max-width: fit-content;
+                margin: auto;
+                gap: 1ch;
+				margin-top: 4ch;
+            }
+            .block {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 0ch;
+            }
+            .sample {
+                width: 8ch;
+                height: 8ch;
+            }
+        </style>
+    </head>
+    <body>
+        <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/named-color"
+            >MDN &lt;named-colors&gt;
+        </a>
+        &#x2022;
+        <a href="https://www.w3.org/TR/css-color-4/#named-colors">
+            W3C CSS Colors Level 4
+        </a>
+        &#x2022;
+        <a href="https://www.w3.org/TR/css-color-3/#ref-X11COLORS">
+            X11COLORS
+        </a>
+        <div class="poster"></div>
+        <script>
+            const names = [
+                "aliceblue",
+                "antiquewhite",
+                "aqua",
+                "aquamarine",
+                "azure",
+                "beige",
+                "bisque",
+                "black",
+                "blanchedalmond",
+                "blue",
+                "blueviolet",
+                "brown",
+                "burlywood",
+                "cadetblue",
+                "chartreuse",
+                "chocolate",
+                "coral",
+                "cornflowerblue",
+                "cornsilk",
+                "crimson",
+                "cyan",
+                "darkblue",
+                "darkcyan",
+                "darkgoldenrod",
+                "darkgray",
+                "darkgreen",
+                "darkgrey",
+                "darkkhaki",
+                "darkmagenta",
+                "darkolivegreen",
+                "darkorange",
+                "darkorchid",
+                "darkred",
+                "darksalmon",
+                "darkseagreen",
+                "darkslateblue",
+                "darkslategrey",
+                "darkturquoise",
+                "darkviolet",
+                "deeppink",
+                "deepskyblue",
+                "dimgray",
+                "dimgrey",
+                "dodgerblue",
+                "firebrick",
+                "floralwhite",
+                "forestgreen",
+                "fuchsia",
+                "gainsboro",
+                "ghostwhite",
+                "gold",
+                "goldenrod",
+                "gray",
+                "green",
+                "greenyellow",
+                "grey",
+                "honeydew",
+                "hotpink",
+                "indianred",
+                "indigo",
+                "ivory",
+                "khaki",
+                "lavender",
+                "lavenderblush",
+                "lawngreen",
+                "lemonchiffon",
+                "lightblue",
+                "lightcoral",
+                "lightcyan",
+                "lightgoldenrodyellow",
+                "lightgray",
+                "lightgreen",
+                "lightgrey",
+                "lightpink",
+                "lightsalmon",
+                "lightseagreen",
+                "lightskyblue",
+                "lightslategray",
+                "lightslategrey",
+                "lightsteelblue",
+                "lightyellow",
+                "lime",
+                "limegreen",
+                "linen",
+                "magenta",
+                "maroon",
+                "mediumaquamarine",
+                "mediumblue",
+                "mediumorchid",
+                "mediumpurple",
+                "mediumseagreen",
+                "mediumslateblue",
+                "mediumspringgreen",
+                "mediumturquoise",
+                "mediumvioletred",
+                "midnightblue",
+                "mintcream",
+                "mistyrose",
+                "moccasin",
+                "navajowhite",
+                "navy",
+                "oldlace",
+                "olive",
+                "olivedrab",
+                "orange",
+                "orangered",
+                "orchid",
+                "palegoldenrod",
+                "palegreen",
+                "paleturquoise",
+                "palevioletred",
+                "papayawhip",
+                "peachpuff",
+                "peru",
+                "pink",
+                "plum",
+                "powderblue",
+                "purple",
+                "rebeccapurple",
+                "red",
+                "rosybrown",
+                "royalblue",
+                "saddlebrown",
+                "salmon",
+                "sandybrown",
+                "seagreen",
+                "seashell",
+                "sienna",
+                "silver",
+                "skyblue",
+                "slateblue",
+                "slategray",
+                "slategrey",
+                "snow",
+                "springgreen",
+                "steelblue",
+                "tan",
+                "teal",
+                "thistle",
+                "tomato",
+                "turquoise",
+                "violet",
+                "wheat",
+                "whitesmoke",
+                "yellow",
+                "yellowgreen",
+            ];
+
+            const posterDiv = document.querySelector(".poster");
+
+            names.forEach((name) => posterDiv.appendChild(colorBlock(name)));
+
+            function colorBlock(name) {
+                const blockDiv = document.createElement("div");
+                blockDiv.classList.add("block");
+
+                const sampleDiv = document.createElement("div");
+                sampleDiv.classList.add("sample");
+                sampleDiv.style.backgroundColor = `${name}`;
+
+                const nameDiv = document.createElement("div");
+                nameDiv.classList.add("name");
+                nameDiv.innerText = `${name}`;
+
+                blockDiv.appendChild(sampleDiv);
+                blockDiv.appendChild(nameDiv);
+
+                return blockDiv;
+            }
+        </script>
+    </body>
+</html>
