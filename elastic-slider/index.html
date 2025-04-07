@@ -148,12 +148,11 @@
                 // because we only want these transitions upon slider release,
                 // not while the slider is being moved manually.
                 slider.style.transition =
-                    "width 500ms, height 500ms, left 500ms, top 500ms, bottom 500ms, border-radius 500ms";
+                    "width 500ms, height 500ms, left 500ms, top 500ms, border-radius 500ms";
                 slider.style.height = "100%";
                 slider.style.width = "100%";
                 slider.style.left = "0px";
                 slider.style.top = "0px";
-                slider.style.bottom = "0px";
                 slider.style.borderRadius = restRadius;
 
                 render();
@@ -182,14 +181,16 @@
                 if (stretchLevel === 0) {
                     // do nothing
                 } else if (level === 1) {
-                    slider.style.top = "unset";
-                    slider.style.bottom = `${stretchLevel * SHIFT_MULTIPLIER}px`;
+                    slider.style.top = `-${
+                        heightDiff + stretchLevel * SHIFT_MULTIPLIER
+                    }px`;
                 } else if (level === 0) {
                     slider.style.top = `${stretchLevel * SHIFT_MULTIPLIER}px`;
-                    slider.style.bottom = "unset";
                 }
 
-                slider.style.background = `linear-gradient(to top, lime ${level * 100}%, gray ${level * 100}%)`;
+                slider.style.background = `linear-gradient(to top, lime ${
+                    level * 100
+                }%, gray ${level * 100}%)`;
             }
 
             render();
