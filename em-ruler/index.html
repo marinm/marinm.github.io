@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Em Ruler</title>
+        <style>
+            body {
+                background-color: silver;
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+                width: 100dvw;
+                height: 100dvh;
+                color: black;
+                display: flex;
+                flex-direction: column;
+                gap: 1em;
+                justify-content: center;
+                align-items: center;
+                font-size: 16px;
+            }
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(10, 1fr);
+                gap: 1em;
+                font-family: default;
+                margin-top: 1em;
+            }
+            .cell {
+                background-color: white;
+                width: 1em;
+                height: 1em;
+                padding: 0;
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <select onchange="setFont(this.value)" class="font-select">
+            <option value="Arial">Arial (sans-serif)</option>
+            <option value="Verdana">Verdana (sans-serif)</option>
+            <option value="Tahoma">Tahoma (sans-serif)</option>
+            <option value="Trebuchet MS">Trebuchet MS (sans-serif)</option>
+            <option value="Times New Roman">Times New Roman (serif)</option>
+            <option value="Georgia">Georgia (serif)</option>
+            <option value="Garamond">Garamond (serif)</option>
+            <option value="Courier New">Courier New (monospace)</option>
+            <option value="Brush Script MT">Brush Script MT (cursive)</option>
+        </select>
+        <div class="grid"></div>
+        <p>Each cell is a 1 em x 1 em square</p>
+        <div>Computed: 1em = <span class="computed-length"></span></div>
+        <script>
+            const grid = document.querySelector(".grid");
+
+            const characters = [
+                ..." \
+				!  \"  #  $  %  &  '  (  )  *  +  ,   -  .  /     \
+				0   1  2  3  4  5  6  7  8  9  :  ;   <  =  >  ?  \
+				@   A  B  C  D  E  F  G  H  I  J  K   L  M  N  O  \
+				P   Q  R  S  T  U  V  W  X  Y  Z  [  \\  ]  ^  _  \
+				`   a  b  c  d  e  f  g  h  i  j  k   l  m  n  o  \
+				p   q  r  s  t  u  v  w  x  y  z  {   |  }  ~     \
+			".replaceAll(/\s/g, ""),
+            ];
+
+            function appendCharacter(c) {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                cell.innerText = c;
+                grid.appendChild(cell);
+            }
+
+            function setFont(font) {
+                grid.style.fontFamily = font;
+            }
+
+            function getComputedLength() {
+                const firstCell = document.querySelector(".cell");
+
+                const length = firstCell.offsetWidth;
+                document.querySelector(
+                    ".computed-length"
+                ).innerText = `${length} px`;
+            }
+
+            setFont(document.querySelector(".font-select").value);
+
+            characters.forEach(appendCharacter);
+            getComputedLength();
+        </script>
+    </body>
+</html>
