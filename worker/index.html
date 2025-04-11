@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Worker</title>
+        <style>
+            body {
+                background-color: silver;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                font-family: sans-serif;
+                padding: 1em;
+                margin: 0;
+                box-sizing: border-box;
+                width: 100dvw;
+                height: 100dvh;
+            }
+        </style>
+    </head>
+    <body>
+        <p id="instructions"></p>
+        <p id="message"></p>
+
+        <script>
+            const instructions = document.querySelector("#instructions");
+            const workerMessage = document.querySelector("#message");
+
+            function onWorkerMessage(event) {
+                workerMessage.innerHTML = event.data;
+            }
+
+            if (!window.Worker) {
+                instructions.innerHTML = "Worker not available";
+            } else {
+                instructions.innerHTML = "Tap anywhere to ping worker";
+                setup();
+            }
+
+            function setup() {
+                const worker = new window.Worker("./worker.js");
+
+                worker.addEventListener("message", onWorkerMessage);
+
+                document.addEventListener("click", () => {
+                    worker.postMessage("ping");
+                });
+            }
+        </script>
+    </body>
+</html>
