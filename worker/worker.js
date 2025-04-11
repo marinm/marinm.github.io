@@ -1,3 +1,8 @@
+let running = false;
+let interval = null;
+
+let i = 0;
+
 self.addEventListener("message", function (event) {
     switch (event.data) {
         case "run":
@@ -15,13 +20,40 @@ self.addEventListener("message", function (event) {
 });
 
 function run() {
-    self.postMessage("received run message");
+    if (running) {
+        return;
+    }
+    running = true;
+
+    interval = setInterval(iterate, 250);
 }
 
 function pause() {
-    self.postMessage("received pause message");
+    if (!running) {
+        return;
+    }
+    running = false;
+    emitState();
 }
 
 function reset() {
-    self.postMessage("received reset message");
+    if (!interval) {
+        return; 
+    }
+    running = false;
+    i = 0;
+    clearInterval(interval);
+    emitState();
+}
+
+function iterate() {
+    if (!running) {
+        return;
+    }
+    i++;
+    emitState();
+}
+
+function emitState() {
+    self.postMessage(`running: ${running} i: ${i}`);
 }
