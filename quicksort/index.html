@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Quicksort</title>
+        <style>
+            body {
+                background-color: silver;
+                padding: 1em;
+                margin: 0;
+                box-sizing: border-box;
+                color: black;
+                font-family: monospace;
+            }
+            #all-numbers {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1em;
+                max-width: 100%;
+                margin: auto;
+            }
+            .number {
+                display: inline-block;
+                border: 0px solid black;
+                width: 2em;
+                text-align: right;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="all-numbers"></div>
+        <script>
+            const N_NUMBERS = 1000;
+
+            const allNumbersDiv = document.querySelector("#all-numbers");
+
+            for (let i = 0; i < N_NUMBERS; i++) {
+                let numberDiv = document.createElement("div");
+                numberDiv.classList.add("number");
+                numberDiv.innerText = `${i}`;
+                allNumbersDiv.appendChild(numberDiv);
+            }
+        </script>
+    </body>
+</html>
