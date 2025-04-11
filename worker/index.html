@@ -48,7 +48,14 @@
             const workerMessage = document.querySelector("#message");
 
             function onWorkerMessage(event) {
-                workerMessage.innerHTML = event.data;
+                if (event.data.running) {
+                    document.querySelector(".run-button").setAttribute("disabled", true);
+                    document.querySelector(".pause-button").removeAttribute("disabled");
+                } else {
+                    document.querySelector(".run-button").removeAttribute("disabled");
+                    document.querySelector(".pause-button").setAttribute("disabled", true);
+                }
+                workerMessage.innerHTML = `running:${event.data.running} i:${event.data.i}`;
             }
 
             if (!window.Worker) {

@@ -38,7 +38,7 @@ function pause() {
 
 function reset() {
     if (!interval) {
-        return; 
+        return;
     }
     running = false;
     i = 0;
@@ -55,5 +55,5 @@ function iterate() {
 }
 
 function emitState() {
-    self.postMessage(`running: ${running} i: ${i}`);
+    self.postMessage({ running, i });
 }
