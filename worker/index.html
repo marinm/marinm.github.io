@@ -18,11 +18,30 @@
                 width: 100dvw;
                 height: 100dvh;
             }
+            .controls button {
+                background-color: gray;
+                border: none;
+                font-size: 1rem;
+                border-radius: 0.3em;
+                text-align: center;
+                width: 8em;
+                height: 2em;
+                box-sizing: border-box;
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+            }
         </style>
     </head>
     <body>
         <p id="instructions"></p>
         <p id="message"></p>
+
+        <div class="controls">
+            <button type="button" class="run-button">Run</button>
+            <button type="button" class="pause-button">Pause</button>
+            <button type="button" class="reset-button">Reset</button>
+        </div>
 
         <script>
             const instructions = document.querySelector("#instructions");
@@ -34,8 +53,9 @@
 
             if (!window.Worker) {
                 instructions.innerHTML = "Worker not available";
+                document.querySelector(".controls").style.display = "none";
             } else {
-                instructions.innerHTML = "Tap anywhere to ping worker";
+                instructions.innerHTML = "Click button to ping worker";
                 setup();
             }
 
@@ -44,9 +64,15 @@
 
                 worker.addEventListener("message", onWorkerMessage);
 
-                document.addEventListener("click", () => {
-                    worker.postMessage("ping");
-                });
+                document.querySelector(".run-button").onclick = () => {
+                    worker.postMessage("run");
+                };
+                document.querySelector(".pause-button").onclick = () => {
+                    worker.postMessage("pause");
+                };
+                document.querySelector(".reset-button").onclick = () => {
+                    worker.postMessage("reset");
+                };
             }
         </script>
     </body>
