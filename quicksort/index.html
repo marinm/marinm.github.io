@@ -18,6 +18,7 @@
                 flex-wrap: wrap;
                 gap: 1em;
                 max-width: 100%;
+                width: fit-content;
                 margin: auto;
             }
             .number {
@@ -31,9 +32,19 @@
     <body>
         <div id="all-numbers"></div>
         <script>
+            const worker = new window.Worker("./worker.js");
+
+            worker.addEventListener("message", onWorkerMessage);
+
+            // Generate numbers 0...999 in order
+            // Interrupt
             const N_NUMBERS = 1000;
 
             const allNumbersDiv = document.querySelector("#all-numbers");
+
+            function getRandomInt(max) {
+                return Math.floor(Math.random() * max);
+            }
 
             for (let i = 0; i < N_NUMBERS; i++) {
                 let numberDiv = document.createElement("div");
@@ -41,6 +52,12 @@
                 numberDiv.innerText = `${i}`;
                 allNumbersDiv.appendChild(numberDiv);
             }
+
+            function onWorkerMessage(event) {
+                console.log(event.data);
+            }
+
+            worker.postMessage("ping");
         </script>
     </body>
 </html>
