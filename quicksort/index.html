@@ -12,20 +12,21 @@
                 box-sizing: border-box;
                 color: black;
                 font-family: monospace;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100dvw;
+                height: 100dvh;
             }
             #all-numbers {
                 display: flex;
-                flex-wrap: wrap;
-                gap: 1em;
-                max-width: 100%;
-                width: fit-content;
-                margin: auto;
+                align-items: end;
+                justify-content: center;
+                gap: 3px;
             }
             .number {
-                display: inline-block;
-                border: 0px solid black;
-                width: 2em;
-                text-align: right;
+                width: 1px;
+                background-color: black;
             }
         </style>
     </head>
@@ -36,9 +37,7 @@
 
             worker.addEventListener("message", onWorkerMessage);
 
-            // Generate numbers 0...999 in order
-            // Interrupt
-            const N_NUMBERS = 1000;
+            const N_NUMBERS = 100;
 
             const allNumbersDiv = document.querySelector("#all-numbers");
 
@@ -46,10 +45,10 @@
                 return Math.floor(Math.random() * max);
             }
 
-            for (let i = 0; i < N_NUMBERS; i++) {
+            for (let i = 1; i < 1 + N_NUMBERS; i++) {
                 let numberDiv = document.createElement("div");
                 numberDiv.classList.add("number");
-                numberDiv.innerText = `${i}`;
+                numberDiv.style.height = `${i}px`;
                 allNumbersDiv.appendChild(numberDiv);
             }
 
