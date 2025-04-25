@@ -65,37 +65,27 @@
                 }
             }
 
-            function setValue(position, value) {
-                const numberDiv = document.querySelector(
+            function divAt(position) {
+                return document.querySelector(
                     `.number[data-position="${position}"]`
                 );
-                numberDiv.dataset.value = `${value}`;
-                numberDiv.style.height = `${value}px`;
+            }
+
+            function setValue(position, value) {
+                divAt(position).dataset.value = `${value}`;
+                divAt(position).style.height = `${value}px`;
             }
 
             function getValue(position) {
-                const numberDiv = document.querySelector(
-                    `.number[data-position="${position}"]`
-                );
-                return parseInt(numberDiv.dataset.value);
+                return parseInt(divAt(position).dataset.value);
             }
 
-            function swapValues(p1, p2) {
-                const d1 = document.querySelector(
-                    `.number[data-position="${p1}"]`
-                );
-                const d2 = document.querySelector(
-                    `.number[data-position="${p2}"]`
-                );
+            function swapValues(position1, position2) {
+                const value1 = getValue(position1);
+                const value2 = getValue(position2);
 
-                const d1Value = d1.dataset.value;
-                const d2Value = d2.dataset.value;
-
-                d1.dataset.value = d2Value;
-                d2.dataset.value = d1Value;
-
-                d1.style.height = `${d1.dataset.value}px`;
-                d2.style.height = `${d2.dataset.value}px`;
+                setValue(position1, value2);
+                setValue(position2, value1);
             }
 
             async function setIncreasingValues() {
@@ -108,7 +98,7 @@
             function swapRandom() {
                 const p1 = getRandomPosition();
                 const p2 = getRandomPosition();
-                swapValues(p1, p2);                
+                swapValues(p1, p2);
             }
 
             async function shuffle() {
