@@ -49,15 +49,17 @@
                 return getRandomInt(N_NUMBERS);
             }
 
-            for (let i = 0; i < N_NUMBERS; i++) {
-                let numberDiv = document.createElement("div");
-                numberDiv.classList.add("number");
-                numberDiv.style.height = `${i + 1}px`;
-                numberDiv.dataset.position = `${i}`;
-                numberDiv.dataset.value = `${i + 1}`;
-                allNumbersDiv.appendChild(numberDiv);
+            function generateDivs() {
+                for (let i = 0; i < N_NUMBERS; i++) {
+                    let numberDiv = document.createElement("div");
+                    numberDiv.classList.add("number");
+                    numberDiv.style.height = `${i + 1}px`;
+                    numberDiv.dataset.position = `${i}`;
+                    numberDiv.dataset.value = `${i + 1}`;
+                    allNumbersDiv.appendChild(numberDiv);
+                }
             }
-
+            
             function swapRandom() {
                 const p1 = getRandomPosition();
                 const p2 = getRandomPosition();
@@ -96,13 +98,14 @@
                 delayedSwap();
             }
 
-            shuffle();
-
             function onWorkerMessage(event) {
                 console.log(event.data);
             }
 
             worker.postMessage("ping");
+
+            generateDivs();
+            shuffle();
         </script>
     </body>
 </html>
