@@ -45,12 +45,48 @@
                 return Math.floor(Math.random() * max);
             }
 
-            for (let i = 1; i < 1 + N_NUMBERS; i++) {
+            function getRandomPosition() {
+                return getRandomInt(N_NUMBERS);
+            }
+
+            for (let i = 0; i < N_NUMBERS; i++) {
                 let numberDiv = document.createElement("div");
                 numberDiv.classList.add("number");
-                numberDiv.style.height = `${i}px`;
+                numberDiv.style.height = `${i + 1}px`;
+                numberDiv.dataset.position = `${i}`;
+                numberDiv.dataset.value = `${i + 1}`;
                 allNumbersDiv.appendChild(numberDiv);
             }
+
+            function swapRandom() {
+                const p1 = getRandomPosition();
+                const p2 = getRandomPosition();
+
+                const d1 = document.querySelector(
+                    `.number[data-position="${p1}"]`
+                );
+                const d2 = document.querySelector(
+                    `.number[data-position="${p2}"]`
+                );
+
+                const d1Value = d1.dataset.value;
+                const d2Value = d2.dataset.value;
+
+                d1.dataset.value = d2Value;
+                d2.dataset.value = d1Value;
+
+                d1.style.height = `${d1.dataset.value}px`;
+                d2.style.height = `${d2.dataset.value}px`;
+            }
+
+            function shuffle() {
+                const N_SWAPS = 100;
+                for (let i = 0; i < N_SWAPS; i++) {
+                    swapRandom();
+                }
+            }
+
+            shuffle();
 
             function onWorkerMessage(event) {
                 console.log(event.data);
