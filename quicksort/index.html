@@ -79,11 +79,21 @@
                 d2.style.height = `${d2.dataset.value}px`;
             }
 
-            function shuffle() {
-                const N_SWAPS = 100;
-                for (let i = 0; i < N_SWAPS; i++) {
+            const N_SWAPS = 100;
+            let swapCount = 0;
+
+            function delayedSwap() {
+                setTimeout(() => {
                     swapRandom();
-                }
+                    swapCount++;
+                    if (swapCount < N_SWAPS) {
+                        delayedSwap();     
+                    }
+                }, 50);
+            }
+
+            function shuffle() {
+                delayedSwap();
             }
 
             shuffle();
