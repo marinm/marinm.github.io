@@ -1,23 +1,19 @@
-export async function shuffle(arrayLength, getValue, setValue, interrupt) {
-	for (let i = 0; i < arrayLength; i++) {
-		swapRandom(arrayLength, getValue, setValue);
+export async function shuffle(values, nSwaps, interrupt) {
+	for (let i = 0; i < nSwaps; i++) {
+		swapRandom(values);
 		await interrupt();
 	}
 }
 
-function swapRandom(arrayLength, getValue, setValue) {
-	const position1 = getRandomPosition(arrayLength);
-	const position2 = getRandomPosition(arrayLength);
+function swapRandom(values) {
+	const position1 = getRandomInt(values.length);
+	const position2 = getRandomInt(values.length);
 
-	const value1 = getValue(position1);
-	const value2 = getValue(position2);
+	const value1 = values[position1];
+	const value2 = values[position2];
 
-	setValue(position1, value2);
-	setValue(position2, value1);
-}
-
-function getRandomPosition(arrayLength) {
-	return getRandomInt(arrayLength);
+	values[position1] = value2;
+	values[position2] = value1;
 }
 
 function getRandomInt(max) {

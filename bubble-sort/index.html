@@ -42,6 +42,8 @@
             const DELAY_MS = 0;
             const DELAY_BETWEEN_STAGES = 0;
 
+            const values = Array(N_NUMBERS).fill(0);
+
             const allNumbersDiv = document.querySelector("#all-numbers");
 
             function sleep(ms) {
@@ -54,8 +56,15 @@
                     numberDiv.classList.add("number");
                     numberDiv.style.height = `5px`;
                     numberDiv.dataset.position = `${i}`;
-                    numberDiv.dataset.value = "";
                     allNumbersDiv.appendChild(numberDiv);
+                    await sleep(DELAY_MS);
+                }
+            }
+
+            async function setIncreasingValues() {
+                for (let i = 0; i < N_NUMBERS; i++) {
+                    values[i] = i + 1;
+                    render();
                     await sleep(DELAY_MS);
                 }
             }
@@ -66,23 +75,14 @@
                 );
             }
 
-            function setValue(position, value) {
-                divAt(position).dataset.value = `${value}`;
-                divAt(position).style.height = `${value}px`;
-            }
-
-            function getValue(position) {
-                return parseInt(divAt(position).dataset.value);
-            }
-
-            async function setIncreasingValues() {
-                for (let i = 0; i < N_NUMBERS; i++) {
-                    setValue(i, i + 1);
-                    await sleep(DELAY_MS);
-                }
+            function render() {
+                values.forEach((value, i) => {
+                    divAt(i).style.height = `${value + 1}px`;
+                });
             }
 
             async function interrupt() {
+                render();
                 await sleep(DELAY_MS);
             }
 
@@ -91,9 +91,9 @@
             await sleep(DELAY_BETWEEN_STAGES);
             await setIncreasingValues();
             await sleep(DELAY_BETWEEN_STAGES);
-            await shuffle(N_NUMBERS, getValue, setValue, interrupt);
+            await shuffle(values, N_SWAPS, interrupt);
             await sleep(DELAY_BETWEEN_STAGES);
-            await bubbleSort(N_NUMBERS, getValue, setValue, interrupt);
+            await bubbleSort(values, interrupt);
             console.log("Done");
         </script>
     </body>

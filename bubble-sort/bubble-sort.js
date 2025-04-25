@@ -1,15 +1,15 @@
-export async function bubbleSort(arrayLength, getValue, setValue, interrupt) {
+export async function bubbleSort(values, interrupt) {
     let sorted = false;
     while (!sorted) {
         sorted = true;
-        for (let i = 0; i < arrayLength - 1; i++) {
-            const vCurrent = getValue(i);
-            const vNext = getValue(i + 1);
+        for (let i = 0; i < values.length - 1; i++) {
+            const vCurrent = values[i];
+            const vNext = values[i + 1];
 
             if (vCurrent > vNext) {
 				// Swap
-				setValue(i, vNext);
-				setValue(i + 1, vCurrent);
+				values[i] = vNext;
+				values[i + 1] = vCurrent;
 
                 sorted = false;
             }
