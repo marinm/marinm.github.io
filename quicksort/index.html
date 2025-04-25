@@ -33,10 +33,6 @@
     <body>
         <div id="all-numbers"></div>
         <script>
-            const worker = new window.Worker("./worker.js");
-
-            worker.addEventListener("message", onWorkerMessage);
-
             const N_NUMBERS = 100;
 
             const allNumbersDiv = document.querySelector("#all-numbers");
@@ -59,7 +55,7 @@
                     allNumbersDiv.appendChild(numberDiv);
                 }
             }
-            
+
             function swapRandom() {
                 const p1 = getRandomPosition();
                 const p2 = getRandomPosition();
@@ -89,7 +85,7 @@
                     swapRandom();
                     swapCount++;
                     if (swapCount < N_SWAPS) {
-                        delayedSwap();     
+                        delayedSwap();
                     }
                 }, 50);
             }
@@ -97,12 +93,6 @@
             function shuffle() {
                 delayedSwap();
             }
-
-            function onWorkerMessage(event) {
-                console.log(event.data);
-            }
-
-            worker.postMessage("ping");
 
             generateDivs();
             shuffle();
