@@ -34,20 +34,15 @@
     <body>
         <div id="all-numbers"></div>
         <script type="module">
+            import { shuffle } from "./shuffle.js";
+            import { bubbleSort } from "./bubble-sort.js";
+
             const N_NUMBERS = 100;
             const N_SWAPS = 200;
             const DELAY_MS = 0;
             const DELAY_BETWEEN_STAGES = 0;
 
             const allNumbersDiv = document.querySelector("#all-numbers");
-
-            function getRandomInt(max) {
-                return Math.floor(Math.random() * max);
-            }
-
-            function getRandomPosition() {
-                return getRandomInt(N_NUMBERS);
-            }
 
             function sleep(ms) {
                 return new Promise((resolve) => setTimeout(resolve, ms));
@@ -80,14 +75,6 @@
                 return parseInt(divAt(position).dataset.value);
             }
 
-            function swapValues(position1, position2) {
-                const value1 = getValue(position1);
-                const value2 = getValue(position2);
-
-                setValue(position1, value2);
-                setValue(position2, value1);
-            }
-
             async function setIncreasingValues() {
                 for (let i = 0; i < N_NUMBERS; i++) {
                     setValue(i, i + 1);
@@ -95,34 +82,8 @@
                 }
             }
 
-            function swapRandom() {
-                const p1 = getRandomPosition();
-                const p2 = getRandomPosition();
-                swapValues(p1, p2);
-            }
-
-            async function shuffle() {
-                for (let i = 0; i < N_SWAPS; i++) {
-                    swapRandom();
-                    await sleep(DELAY_MS);
-                }
-            }
-
-            async function bubbleSort() {
-                let sorted = false;
-                while (!sorted) {
-                    sorted = true;
-                    for (let i = 0; i < N_NUMBERS - 1; i++) {
-                        const vCurrent = getValue(i);
-                        const vNext = getValue(i + 1);
-
-                        if (vCurrent > vNext) {
-                            swapValues(i, i + 1);
-                            sorted = false;
-                        }
-                        await sleep(DELAY_MS);
-                    }
-                }
+            async function interrupt() {
+                await sleep(DELAY_MS);
             }
 
             console.log("Running...");
@@ -130,9 +91,9 @@
             await sleep(DELAY_BETWEEN_STAGES);
             await setIncreasingValues();
             await sleep(DELAY_BETWEEN_STAGES);
-            await shuffle();
+            await shuffle(N_NUMBERS, getValue, setValue, interrupt);
             await sleep(DELAY_BETWEEN_STAGES);
-            await bubbleSort();
+            await bubbleSort(N_NUMBERS, getValue, setValue, interrupt);
             console.log("Done");
         </script>
     </body>
