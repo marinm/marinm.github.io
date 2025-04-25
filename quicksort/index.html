@@ -23,6 +23,7 @@
                 align-items: end;
                 justify-content: center;
                 gap: 3px;
+                height: 100px;
             }
             .number {
                 width: 1px;
@@ -49,11 +50,39 @@
                 for (let i = 0; i < N_NUMBERS; i++) {
                     let numberDiv = document.createElement("div");
                     numberDiv.classList.add("number");
-                    numberDiv.style.height = `${i + 1}px`;
+                    numberDiv.style.height = `${10}px`;
                     numberDiv.dataset.position = `${i}`;
-                    numberDiv.dataset.value = `${i + 1}`;
+                    numberDiv.dataset.value = "";
                     allNumbersDiv.appendChild(numberDiv);
                 }
+            }
+
+            function setValue(position, value) {
+                const numberDiv = document.querySelector(
+                    `.number[data-position="${position}"]`
+                );
+                numberDiv.dataset.value = `${value}`;
+                numberDiv.style.height = `${value}px`;
+            }
+
+            let nextPosition = 0;
+            let nextValue = 0;
+
+            function delayedSetValue() {
+                setTimeout(() => {
+                    setValue(nextPosition, nextValue);
+                    nextPosition++;
+                    nextValue++;
+                    if (nextPosition < N_NUMBERS) {
+                        delayedSetValue();
+                    }
+                }, 50);
+            }
+
+            function setIncreasingValues() {
+                nextPosition = 0;
+                nextValue = 1;
+                delayedSetValue();
             }
 
             function swapRandom() {
@@ -95,7 +124,8 @@
             }
 
             generateDivs();
-            shuffle();
+            setIncreasingValues();
+            // shuffle();
         </script>
     </body>
 </html>
