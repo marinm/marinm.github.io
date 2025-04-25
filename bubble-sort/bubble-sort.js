@@ -1,3 +1,5 @@
+// https://en.wikipedia.org/wiki/Bubble_sort
+
 export async function bubbleSort(values, interrupt) {
     let sorted = false;
     while (!sorted) {
