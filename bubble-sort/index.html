@@ -34,6 +34,7 @@
     <body>
         <div id="all-numbers"></div>
         <script type="module">
+            import { generateDivs, render } from "./render.js";
             import { shuffle } from "./shuffle.js";
             import { bubbleSort } from "./bubble-sort.js";
 
@@ -44,50 +45,25 @@
 
             const values = Array(N_NUMBERS).fill(0);
 
-            const allNumbersDiv = document.querySelector("#all-numbers");
-
             function sleep(ms) {
                 return new Promise((resolve) => setTimeout(resolve, ms));
-            }
-
-            async function generateDivs() {
-                for (let i = 0; i < N_NUMBERS; i++) {
-                    let numberDiv = document.createElement("div");
-                    numberDiv.classList.add("number");
-                    numberDiv.style.height = `5px`;
-                    numberDiv.dataset.position = `${i}`;
-                    allNumbersDiv.appendChild(numberDiv);
-                    await sleep(DELAY_MS);
-                }
             }
 
             async function setIncreasingValues() {
                 for (let i = 0; i < N_NUMBERS; i++) {
                     values[i] = i + 1;
-                    render();
+                    render(values);
                     await sleep(DELAY_MS);
                 }
             }
 
-            function divAt(position) {
-                return document.querySelector(
-                    `.number[data-position="${position}"]`
-                );
-            }
-
-            function render() {
-                values.forEach((value, i) => {
-                    divAt(i).style.height = `${value + 1}px`;
-                });
-            }
-
             async function interrupt() {
-                render();
+                render(values);
                 await sleep(DELAY_MS);
             }
 
             console.log("Running...");
-            await generateDivs();
+            await generateDivs(values, () => sleep(DELAY_MS));
             await sleep(DELAY_BETWEEN_STAGES);
             await setIncreasingValues();
             await sleep(DELAY_BETWEEN_STAGES);
