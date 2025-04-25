@@ -21,7 +21,7 @@
             #all-numbers {
                 display: flex;
                 align-items: end;
-                justify-content: center;
+                justify-content: start;
                 gap: 3px;
                 height: 100px;
             }
@@ -33,8 +33,10 @@
     </head>
     <body>
         <div id="all-numbers"></div>
-        <script>
+        <script type="module">
             const N_NUMBERS = 100;
+            const N_SWAPS = 100;
+            const DELAY_MS = 40;
 
             const allNumbersDiv = document.querySelector("#all-numbers");
 
@@ -46,14 +48,19 @@
                 return getRandomInt(N_NUMBERS);
             }
 
-            function generateDivs() {
+            function sleep(ms) {
+                return new Promise((resolve) => setTimeout(resolve, ms));
+            }
+
+            async function generateDivs() {
                 for (let i = 0; i < N_NUMBERS; i++) {
                     let numberDiv = document.createElement("div");
                     numberDiv.classList.add("number");
-                    numberDiv.style.height = `${10}px`;
+                    numberDiv.style.height = `5px`;
                     numberDiv.dataset.position = `${i}`;
                     numberDiv.dataset.value = "";
                     allNumbersDiv.appendChild(numberDiv);
+                    await sleep(DELAY_MS);
                 }
             }
 
@@ -65,24 +72,11 @@
                 numberDiv.style.height = `${value}px`;
             }
 
-            let nextPosition = 0;
-            let nextValue = 0;
-
-            function delayedSetValue() {
-                setTimeout(() => {
-                    setValue(nextPosition, nextValue);
-                    nextPosition++;
-                    nextValue++;
-                    if (nextPosition < N_NUMBERS) {
-                        delayedSetValue();
-                    }
-                }, 50);
-            }
-
-            function setIncreasingValues() {
-                nextPosition = 0;
-                nextValue = 1;
-                delayedSetValue();
+            async function setIncreasingValues() {
+                for (let i = 0; i < N_NUMBERS; i++) {
+                    setValue(i, i + 1);
+                    await sleep(DELAY_MS);
+                }
             }
 
             function swapRandom() {
@@ -106,26 +100,18 @@
                 d2.style.height = `${d2.dataset.value}px`;
             }
 
-            const N_SWAPS = 100;
-            let swapCount = 0;
-
-            function delayedSwap() {
-                setTimeout(() => {
+            async function shuffle() {
+                for (let i = 0; i < N_SWAPS; i++) {
                     swapRandom();
-                    swapCount++;
-                    if (swapCount < N_SWAPS) {
-                        delayedSwap();
-                    }
-                }, 50);
+                    await sleep(DELAY_MS);
+                }
             }
 
-            function shuffle() {
-                delayedSwap();
-            }
-
-            generateDivs();
-            setIncreasingValues();
-            // shuffle();
+            await generateDivs();
+            await sleep(1000);
+            await setIncreasingValues();
+            await sleep(1000);
+            await shuffle();
         </script>
     </body>
 </html>
