@@ -39,9 +39,9 @@
             import { bubbleSort } from "./bubble-sort.js";
 
             const N_NUMBERS = 100;
-            const N_SWAPS = 200;
-            const DELAY_MS = 0;
-            const DELAY_BETWEEN_STAGES = 0;
+            const N_SWAPS = N_NUMBERS;
+            const DELAY_MS = 10;
+            const DELAY_BETWEEN_STAGES = 1000;
 
             const values = Array(N_NUMBERS).fill(0);
 
@@ -62,15 +62,27 @@
                 await sleep(DELAY_MS);
             }
 
-            console.log("Running...");
-            await generateDivs(values, () => sleep(DELAY_MS));
+            async function setup() {
+                console.log("Running...");
+                await generateDivs(values, () => sleep(DELAY_MS));
+                await sleep(DELAY_BETWEEN_STAGES);
+                await setIncreasingValues();
+            }
+
+            async function perform() {
+                await shuffle(values, N_SWAPS, interrupt);
+                await sleep(DELAY_BETWEEN_STAGES);
+                await bubbleSort(values, interrupt);
+                console.log("Done");
+            }
+
+            await setup();
             await sleep(DELAY_BETWEEN_STAGES);
-            await setIncreasingValues();
-            await sleep(DELAY_BETWEEN_STAGES);
-            await shuffle(values, N_SWAPS, interrupt);
-            await sleep(DELAY_BETWEEN_STAGES);
-            await bubbleSort(values, interrupt);
-            console.log("Done");
+
+            while (true) {
+                await perform();
+                await sleep(DELAY_BETWEEN_STAGES);
+            }
         </script>
     </body>
 </html>
