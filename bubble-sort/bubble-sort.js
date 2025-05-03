@@ -5,17 +5,19 @@ export async function bubbleSort(values, interrupt) {
     while (!sorted) {
         sorted = true;
         for (let i = 0; i < values.length - 1; i++) {
-            const vCurrent = values[i];
-            const vNext = values[i + 1];
-
-            if (vCurrent > vNext) {
-				// Swap
-				values[i] = vNext;
-				values[i + 1] = vCurrent;
-
+            if (values[i] > values[i + 1]) {
+				swap(values, i, i + 1);
                 sorted = false;
             }
             await interrupt();
         }
     }
+}
+
+function swap(values, i, j) {
+    const iValue = values[i];
+    const jValue = values[j];
+
+    values[i] = jValue;
+    values[j] = iValue;
 }
