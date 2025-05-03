@@ -9,43 +9,41 @@ export async function quicksort(
     lowIndex ??= 0;
     highIndex ??= values.length - 1;
 
-    // Ensure indices are in correct order
-    if (lowIndex >= highIndex || lowIndex < 0) {
+    const canSort = lowIndex >= 0 && highIndex >= 0 && lowIndex < highIndex;
+
+    if (!canSort) {
         return;
     }
 
-    // If there are fewer than 2 elements, there is nothing to do
-    if (highIndex - lowIndex < 2) {
-        return;
-    }
+    const pivotIndex = partition(values, lowIndex, highIndex, interrupt);
 
-    const p = partition(values, lowIndex, highIndex);
-
-    await quicksort(values, lowIndex, p - 1, interrupt);
-    await quicksort(values, p + 1, highIndex, interrupt);
+    await quicksort(values, interrupt, lowIndex, pivotIndex);
+    await interrupt();
+    await quicksort(values, interrupt, pivotIndex + 1, highIndex);
+    await interrupt();
 }
 
-function partition(values, lowIndex, highIndex) {
-    // Choose the last element as the pivot
-    const pivotValue = values[highIndex];
+function partition(values, lowIndex, highIndex, interrupt) {
+    const pivotValue = values[lowIndex];
 
-    // Temporary pivot index
     let i = lowIndex;
+    let j = highIndex;
 
-    for (let j = lowIndex; j < highIndex; j++) {
-        const currentValue = values[j];
-        // If the current element is less than or equal to the pivot
-        if (currentValue <= pivotValue) {
-            swap(values, i, j);
+    let MAX_ITERATIONS = 100;
+    let iteration = 0;
 
-            // Move the temporary pivot index forward
-            i++;
+    while (iteration < MAX_ITERATIONS) {
+        while (values[i] < pivotValue) i++;
+
+        while (values[j] > pivotValue) j--;
+
+        if (i >= j) {
+            return j;
         }
-    }
 
-    // Swap the pivot with the last element
-    swap(values, i, highIndex);
-    return i;
+        swap(values, i, j);
+        iteration++;
+    }
 }
 
 function swap(values, i, j) {
