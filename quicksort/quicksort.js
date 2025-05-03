@@ -1,8 +1,16 @@
 // https://en.wikipedia.org/wiki/Quicksort
 
-export async function quicksort(values, lowIndex, highIndex, interrupt) {
+export async function quicksort(values, interrupt, lowIndex = null, highIndex = null) {
+    lowIndex ??= 0;
+    highIndex ??= values.length - 1;
+
     // Ensure indices are in correct order
     if (lowIndex >= highIndex || lowIndex < 0) {
+        return;
+    }
+
+    // If there are fewer than 2 elements, there is nothing to do
+    if (highIndex - lowIndex < 2) {
         return;
     }
 
