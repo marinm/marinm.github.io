@@ -79,10 +79,12 @@
             await setup();
             await sleep(DELAY_BETWEEN_STAGES);
 
-            while (true) {
-                await perform();
-                await sleep(DELAY_BETWEEN_STAGES);
-            }
+            await perform();
+
+            // while (true) {
+            //     await perform();
+            //     await sleep(DELAY_BETWEEN_STAGES);
+            // }
         </script>
     </body>
 </html>
