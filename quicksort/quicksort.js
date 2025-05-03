@@ -15,15 +15,13 @@ export async function quicksort(
         return;
     }
 
-    const pivotIndex = partition(values, lowIndex, highIndex, interrupt);
+    const pivotIndex = await partition(values, lowIndex, highIndex, interrupt);
 
     await quicksort(values, interrupt, lowIndex, pivotIndex);
-    await interrupt();
     await quicksort(values, interrupt, pivotIndex + 1, highIndex);
-    await interrupt();
 }
 
-function partition(values, lowIndex, highIndex, interrupt) {
+async function partition(values, lowIndex, highIndex, interrupt) {
     const pivotValue = values[lowIndex];
 
     let i = lowIndex;
@@ -43,6 +41,8 @@ function partition(values, lowIndex, highIndex, interrupt) {
 
         swap(values, i, j);
         iteration++;
+
+        await interrupt();
     }
 }
 
