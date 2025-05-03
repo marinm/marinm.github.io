@@ -2,15 +2,17 @@
 
 export async function bubbleSort(values, interrupt) {
     let sorted = false;
+    let lastUnsortedIndex = values.length - 1;
     while (!sorted) {
         sorted = true;
-        for (let i = 0; i < values.length - 1; i++) {
+        for (let i = 0; i < lastUnsortedIndex; i++) {
             if (values[i] > values[i + 1]) {
 				swap(values, i, i + 1);
                 sorted = false;
             }
             await interrupt();
         }
+        lastUnsortedIndex--;
     }
 }
 
