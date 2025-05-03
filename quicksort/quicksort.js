@@ -1,6 +1,11 @@
 // https://en.wikipedia.org/wiki/Quicksort
 
-export async function quicksort(values, interrupt, lowIndex = null, highIndex = null) {
+export async function quicksort(
+    values,
+    interrupt,
+    lowIndex = null,
+    highIndex = null
+) {
     lowIndex ??= 0;
     highIndex ??= values.length - 1;
 
