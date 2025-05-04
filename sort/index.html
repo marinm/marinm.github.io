@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Bubble sort</title>
+        <title>Sort</title>
         <style>
             body {
                 background-color: silver;
@@ -35,12 +35,15 @@
     </head>
     <body>
         <div id="all-numbers"></div>
-        <select id="select-algorithm">
-            <option value="bubble-sort">Bubble sort</option>
-            <option value="insertion-sort">Insertion sort</option>
-            <option value="merge-sort">Merge sort</option>
-            <option value="quick-sort">Quick sort</option>
-        </select>
+        <div>
+            <select id="select-algorithm">
+                <option value="bubble-sort">Bubble sort</option>
+                <option value="insertion-sort">Insertion sort</option>
+                <option value="merge-sort">Merge sort</option>
+                <option value="quick-sort">Quick sort</option>
+            </select>
+            <button id="button-stop">Stop</button>
+        </div>
         <script type="module">
             import { generateDivs, render } from "./render.js";
             import { shuffle } from "./shuffle.js";
@@ -54,6 +57,7 @@
             const values = Array(N_NUMBERS).fill(0);
 
             let lock = true;
+            let stop = false;
 
             function sleep(ms) {
                 return new Promise((resolve) => setTimeout(resolve, ms));
@@ -68,41 +72,89 @@
             }
 
             async function interrupt() {
+                if (stop) {
+                    console.log("Stopped");
+
+                    document
+                        .getElementById("button-stop")
+                        .setAttribute("disabled", true);
+
+                    throw new Error("stopped");
+                }
+
                 render(values);
                 await sleep(DELAY_MS);
             }
 
             async function setup() {
-                console.log("Running...");
-                await generateDivs(values, () => sleep(DELAY_MS));
-                await sleep(DELAY_BETWEEN_STAGES);
+                await generateDivs(values);
                 await setIncreasingValues();
             }
 
             async function perform(algorithm) {
-                await shuffle(values, N_SWAPS, interrupt);
-                await sleep(DELAY_BETWEEN_STAGES);
-                await sort(algorithm, values, interrupt);
+                if (lock) {
+                    console.log("Locked");
+                    return;
+                }
+                lock = true;
+                stop = false;
 
-                console.log("Done");
+                document
+                    .getElementById("select-algorithm")
+                    .setAttribute("disabled", true);
+
+                document
+                    .getElementById("button-stop")
+                    .removeAttribute("disabled");
+
+                try {
+                    console.log("Sorting...");
+                    await shuffle(values, N_SWAPS, interrupt);
+                    await sleep(DELAY_BETWEEN_STAGES);
+                    await sort(algorithm, values, interrupt);
+                    console.log("Done");
+                } catch (error) {
+                    // Do nothing
+                }
+
+                document
+                    .getElementById("select-algorithm")
+                    .removeAttribute("disabled");
+
+                document
+                    .getElementById("button-stop")
+                    .setAttribute("disabled", true);
+
+                lock = false;
+                stop = false;
             }
 
             document
                 .getElementById("select-algorithm")
                 .addEventListener("change", async function (event) {
-                    if (lock) {
-                        console.log('Locked');
-                        return;
-                    }
-                    lock = true;
                     const algorithm = event.target.value;
-                    console.log(`Sort using ${algorithm}`);
                     await perform(algorithm);
-                    lock = false;
                 });
 
+            document
+                .getElementById("button-stop")
+                .addEventListener("click", function (event) {
+                    stop = true;
+                });
+
+            document
+                .getElementById("select-algorithm")
+                .setAttribute("disabled", true);
+
+            document
+                .getElementById("button-stop")
+                .setAttribute("disabled", true);
+
             await setup();
+            await sleep(DELAY_BETWEEN_STAGES);
+
             lock = false;
+            await perform(document.getElementById("select-algorithm").value);
         </script>
     </body>
 </html>

@@ -6,14 +6,13 @@ function divAt(position) {
 	);
 }
 
-export async function generateDivs(values, interrupt) {
+export async function generateDivs(values) {
 	for (let i = 0; i < values.length; i++) {
 		let numberDiv = document.createElement("div");
 		numberDiv.classList.add("number");
-		numberDiv.style.height = `5px`;
+		numberDiv.style.height = `1px`;
 		numberDiv.dataset.position = `${i}`;
 		allNumbersDiv.appendChild(numberDiv);
-		await interrupt();
 	}
 }
 
