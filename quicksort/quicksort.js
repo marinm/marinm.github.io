@@ -1,24 +1,17 @@
 // https://en.wikipedia.org/wiki/Quicksort
 
-export async function quicksort(
-    values,
-    interrupt,
-    lowIndex = null,
-    highIndex = null
-) {
-    lowIndex ??= 0;
-    highIndex ??= values.length - 1;
+export async function quicksort(values, interrupt) {
+    const stack = [[0, values.length - 1]];
 
-    const canSort = lowIndex >= 0 && highIndex >= 0 && lowIndex < highIndex;
+    while (stack.length > 0) {
+        const [lowIndex, highIndex] = stack.pop();
 
-    if (!canSort) {
-        return;
+        if (lowIndex >= 0 && highIndex >= 0 && lowIndex < highIndex) {
+            const pivotIndex = await partition(values, lowIndex, highIndex, interrupt);
+            stack.push([lowIndex, pivotIndex]);
+            stack.push([pivotIndex + 1, highIndex]);
+        }
     }
-
-    const pivotIndex = await partition(values, lowIndex, highIndex, interrupt);
-
-    await quicksort(values, interrupt, lowIndex, pivotIndex);
-    await quicksort(values, interrupt, pivotIndex + 1, highIndex);
 }
 
 async function partition(values, lowIndex, highIndex, interrupt) {
