@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Insertion sort</title>
+        <title>Bubble sort</title>
         <style>
             body {
                 background-color: silver;
@@ -13,8 +13,10 @@
                 color: black;
                 font-family: monospace;
                 display: flex;
+                flex-direction: column;
                 justify-content: center;
                 align-items: center;
+                gap: 2em;
                 width: 100dvw;
                 height: 100dvh;
             }
@@ -33,10 +35,16 @@
     </head>
     <body>
         <div id="all-numbers"></div>
+        <select id="select-algorithm">
+            <option value="bubble-sort">Bubble sort</option>
+            <option value="insertion-sort">Insertion sort</option>
+            <option value="merge-sort">Merge sort</option>
+            <option value="quick-sort">Quick sort</option>
+        </select>
         <script type="module">
             import { generateDivs, render } from "./render.js";
             import { shuffle } from "./shuffle.js";
-            import { insertionSort } from "./insertion-sort.js";
+            import { sort } from "./sort/sort.js";
 
             const N_NUMBERS = 100;
             const N_SWAPS = N_NUMBERS;
@@ -44,6 +52,8 @@
             const DELAY_BETWEEN_STAGES = 1000;
 
             const values = Array(N_NUMBERS).fill(0);
+
+            let lock = true;
 
             function sleep(ms) {
                 return new Promise((resolve) => setTimeout(resolve, ms));
@@ -69,20 +79,30 @@
                 await setIncreasingValues();
             }
 
-            async function perform() {
+            async function perform(algorithm) {
                 await shuffle(values, N_SWAPS, interrupt);
                 await sleep(DELAY_BETWEEN_STAGES);
-                await insertionSort(values, interrupt);
+                await sort(algorithm, values, interrupt);
+
                 console.log("Done");
             }
 
-            await setup();
-            await sleep(DELAY_BETWEEN_STAGES);
+            document
+                .getElementById("select-algorithm")
+                .addEventListener("change", async function (event) {
+                    if (lock) {
+                        console.log('Locked');
+                        return;
+                    }
+                    lock = true;
+                    const algorithm = event.target.value;
+                    console.log(`Sort using ${algorithm}`);
+                    await perform(algorithm);
+                    lock = false;
+                });
 
-            while (true) {
-                await perform();
-                await sleep(DELAY_BETWEEN_STAGES);
-            }
+            await setup();
+            lock = false;
         </script>
     </body>
 </html>
