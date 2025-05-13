@@ -25,8 +25,8 @@
                 flex-direction: column;
                 gap: 1px;
             }
-            .tasks-row {
-                
+            .bold {
+                font-weight: bold;
             }
             .lime {
                 color: lime;
@@ -107,6 +107,7 @@
 
             function tasksRow(taskNumber) {
                 const task = tasks[taskNumber];
+                const [start, end] = task;
 
                 const row = document.createElement("tr");
                 row.classList.add("tasks-row");
@@ -127,6 +128,12 @@
                     }
                     row.appendChild(td);
                 }
+
+                const duration = end - start + 1;
+                const durationTd = document.createElement("td");
+                durationTd.innerText = `${duration}`;
+                durationTd.classList.add("bold");
+                row.appendChild(durationTd);
 
                 return row;
             }
