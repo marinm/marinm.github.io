@@ -26,9 +26,7 @@
                 gap: 1px;
             }
             .tasks-row {
-                display: flex;
-                flex-direction: row;
-                gap: 1px;
+                
             }
             .lime {
                 color: lime;
@@ -38,7 +36,7 @@
     <body>
         Interval scheduling
 
-        <pre class="chart"></pre>
+        <table></table>
 
         <script type="module">
             // https://en.wikipedia.org/wiki/Interval_scheduling
@@ -81,22 +79,24 @@
             }
 
             function render() {
-                const chart = document.querySelector(".chart");
+                const table = document.querySelector("table");
 
-                const row = document.createElement("div");
+                const row = document.createElement("tr");
                 row.classList.add("tasks-row");
 
-                let timeLabelsString = "  ";
+                const emptyTd = document.createElement("td");
+                row.appendChild(emptyTd);
+
                 for (let t = 0; t < N_TIMES; t++) {
-                    timeLabelsString += ` ${t.toString().padStart(2, "0")}`;
+                    const td = document.createElement("td");
+                    td.innerText = `${t.toString().padStart(2, "0")}`;
+                    row.appendChild(td);
                 }
 
-                row.innerText = timeLabelsString;
-
-                chart.appendChild(row);
+                table.appendChild(row);
 
                 for (let i = 0; i < N_TASKS; i++) {
-                    chart.appendChild(tasksRow(i));
+                    table.appendChild(tasksRow(i));
                 }
             }
 
@@ -108,20 +108,25 @@
             function tasksRow(taskNumber) {
                 const task = tasks[taskNumber];
 
-                const row = document.createElement("div");
+                const row = document.createElement("tr");
                 row.classList.add("tasks-row");
 
-                let rowString = `${taskNumber.toString().padStart(2, "0")}`;
+                const labelTd = document.createElement("td");
+                labelTd.innerText = `${taskNumber.toString().padStart(2, "0")}`;
+                row.appendChild(labelTd);
 
                 for (let t = 0; t < N_TIMES; t++) {
-                    rowString += scheduledAt(task, t) ? ` **` : ` --`;
+                    const td = document.createElement("td");
+                    if (scheduledAt(task, t)) {
+                        td.innerText = "**";
+                        if (pickedTasks.includes(taskNumber)) {
+                            td.classList.add("lime");
+                        }
+                    } else {
+                        td.innerText = "--";
+                    }
+                    row.appendChild(td);
                 }
-
-                if (pickedTasks.includes(taskNumber)) {
-                    row.classList.add("lime");
-                }
-
-                row.innerText = rowString;
 
                 return row;
             }
