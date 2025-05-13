@@ -1,0 +1,26 @@
+body {
+    background-color: silver;
+    padding: 1em;
+    margin: 0;
+    box-sizing: border-box;
+    color: black;
+    display: flex;
+    font-family: "Menlo", monospace;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2em;
+    width: 100dvw;
+    height: 100dvh;
+}
+.chart {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+.bold {
+    font-weight: bold;
+}
+.lime {
+    color: lime;
+}
