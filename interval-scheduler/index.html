@@ -30,6 +30,9 @@
                 flex-direction: row;
                 gap: 1px;
             }
+            .lime {
+                color: lime;
+            }
         </style>
     </head>
     <body>
@@ -45,6 +48,7 @@
             const MAX_TASK_DURATION = 10;
 
             const tasks = new Array(N_TASKS).fill([0, 0]);
+            const pickedTasks = [];
 
             setup();
 
@@ -61,6 +65,12 @@
             }
 
             function setup() {
+                generateRandomTasks();
+                pickEarliestFinishTimeFirst();
+                render();
+            }
+
+            function generateRandomTasks() {
                 // Generate random tasks
                 for (let i = 0; i < tasks.length; i++) {
                     tasks[i] = getRandomInterval(0, N_TIMES, 10);
@@ -68,7 +78,9 @@
 
                 // Sort tasks by start time
                 tasks.sort((task1, task2) => task1[0] - task2[0]);
+            }
 
+            function render() {
                 const chart = document.querySelector(".chart");
 
                 const row = document.createElement("div");
@@ -80,6 +92,7 @@
                 }
 
                 row.innerText = timeLabelsString;
+
                 chart.appendChild(row);
 
                 for (let i = 0; i < N_TASKS; i++) {
@@ -104,9 +117,25 @@
                     rowString += scheduledAt(task, t) ? ` **` : ` --`;
                 }
 
+                if (pickedTasks.includes(taskNumber)) {
+                    row.classList.add("lime");
+                }
+
                 row.innerText = rowString;
 
                 return row;
+            }
+
+            function pickEarliestFinishTimeFirst() {
+                let lastEnd = -Infinity;
+
+                tasks.forEach((t, i) => {
+                    const [start, end] = t;
+                    if (start > lastEnd) {
+                        pickedTasks.push(i);
+                        lastEnd = end;
+                    }
+                });
             }
         </script>
     </body>
