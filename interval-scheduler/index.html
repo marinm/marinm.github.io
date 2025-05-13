@@ -9,24 +9,28 @@
     <body>
         Interval scheduling
 
-        <table></table>
+        <div id="output"></div>
 
         <script type="module">
             // https://en.wikipedia.org/wiki/Interval_scheduling
 
             import { generateRandomTasks } from "./generate-random-tasks.js";
             import { pickEarliestFinishTimeFirst } from "./pick-earliest-finish-time-first.js";
-            import { render } from "./render.js";
+            import { scheduleTable } from "./render.js";
 
             const N_TIMES = 30;
             const N_TASKS = 20;
             const MAX_TASK_DURATION = 10;
 
+            const output = document.querySelector("#output");
+
             const tasks = generateRandomTasks(N_TASKS, N_TIMES, MAX_TASK_DURATION);
 
             const picked = pickEarliestFinishTimeFirst(tasks);
 
-            render(tasks, picked, N_TIMES);
+            const table = scheduleTable(tasks, picked, N_TIMES);
+
+            output.appendChild(table);
         </script>
     </body>
 </html>

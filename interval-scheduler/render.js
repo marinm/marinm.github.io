@@ -1,5 +1,5 @@
-export function render(tasks, picked, nTimes) {
-    const table = document.querySelector("table");
+export function scheduleTable(tasks, picked, nTimes) {
+    const table = document.createElement("table");
 
     const row = document.createElement("tr");
     row.classList.add("tasks-row");
@@ -18,6 +18,8 @@ export function render(tasks, picked, nTimes) {
     for (let i = 0; i < tasks.length; i++) {
         table.appendChild(tasksRow(tasks[i], i, picked, nTimes));
     }
+
+	return table;
 }
 
 function tasksRow(task, i, picked, nTimes) {
