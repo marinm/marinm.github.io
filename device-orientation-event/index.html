@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    device-orientation-event
+    <table>
+        <thead>
+            <tr>
+                <th>Variable</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>absolute</td>
+                <td>
+                    <div data-name="absolute"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>alpha</td>
+                <td>
+                    <div data-name="alpha"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>beta</td>
+                <td>
+                    <div data-name="beta"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>gamma</td>
+                <td>
+                    <div data-name="gamma"></div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        window.addEventListener("deviceorientation", (event) => {
+            document.querySelector('div[data-name="absolute"]').innerHTML = event.absolute;
+            document.querySelector('div[data-name="alpha"]').innerHTML = event.alpha;
+            document.querySelector('div[data-name="beta"]').innerHTML = event.beta;
+            document.querySelector('div[data-name="gamma"]').innerHTML = event.gamma;
+        });
+    </script>
+</body>
+
+</html>
