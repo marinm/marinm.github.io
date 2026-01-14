@@ -46,23 +46,27 @@
     </table>
 
     <script>
-        window.addEventListener("click", async (event) => {
-            if (
-                typeof DeviceOrientationEvent !== "undefined" &&
-                typeof DeviceOrientationEvent.requestPermission === "function"
-            ) {
-                document.querySelector('#message').innerHTML = "Tap to allow 'deviceorientation' events";
+        function setMessage(message) {
+            document.querySelector('#message').innerHTML = message;
+        }
 
-                const permission = await DeviceOrientationEvent.requestPermission();
-                if (permission == "granted") {
-                    document.querySelector('#message').innerHTML = "";
-                } else {
-                    document.querySelector('#message').innerHTML = "Permission not granted";
-                }
+        if ("DeviceOrientationEvent" in window) {
+            if ("requestPermission" in window.DeviceOrientationEvent) {
+                setMessage("DeviceOrientationEvent available, requestPermission available. Tap to allow 'deviceorientation' events.");
+                window.addEventListener("click", async (event) => {
+                    const permission = await DeviceOrientationEvent.requestPermission();
+                    if (permission == "granted") {
+                        setMessage("User allowed DeviceOrientationEvent");
+                    } else {
+                        setMessage("User did not allow DeviceOrientationEvent");
+                    }
+                }); 
             } else {
-                document.querySelector('#message').innerHTML = "";
+                setMessage("DeviceOrientationEvent available, requestPermission not available");
             }
-        });
+        } else {
+            setMessage("DeviceOrientationEvent not available");
+        }
         
         window.addEventListener("deviceorientation", (event) => {
             document.querySelector('div[data-name="absolute"]').innerHTML = event.absolute;
