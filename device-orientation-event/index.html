@@ -53,7 +53,7 @@
         if ("DeviceOrientationEvent" in window) {
             if ("requestPermission" in window.DeviceOrientationEvent) {
                 setMessage("DeviceOrientationEvent available, requestPermission available. Tap to allow 'deviceorientation' events.");
-                window.addEventListener("click", async (event) => {
+                document.body.addEventListener("click", async (event) => {
                     const permission = await DeviceOrientationEvent.requestPermission();
                     if (permission == "granted") {
                         setMessage("User allowed DeviceOrientationEvent");
