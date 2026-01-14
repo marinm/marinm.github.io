@@ -9,6 +9,7 @@
 
 <body>
     device-orientation-event
+    <p id="message"></p>
     <table>
         <thead>
             <tr>
@@ -45,6 +46,24 @@
     </table>
 
     <script>
+        window.addEventListener("click", async (event) => {
+            if (
+                typeof DeviceOrientationEvent !== "undefined" &&
+                typeof DeviceOrientationEvent.requestPermission === "function"
+            ) {
+                document.querySelector('#message').innerHTML = "Tap to allow 'deviceorientation' events";
+
+                const permission = await DeviceOrientationEvent.requestPermission();
+                if (permission == "granted") {
+                    document.querySelector('#message').innerHTML = "";
+                } else {
+                    document.querySelector('#message').innerHTML = "Permission not granted";
+                }
+            } else {
+                document.querySelector('#message').innerHTML = "";
+            }
+        });
+        
         window.addEventListener("deviceorientation", (event) => {
             document.querySelector('div[data-name="absolute"]').innerHTML = event.absolute;
             document.querySelector('div[data-name="alpha"]').innerHTML = event.alpha;
