@@ -70,9 +70,9 @@
         
         window.addEventListener("deviceorientation", (event) => {
             document.querySelector('div[data-name="absolute"]').innerHTML = event.absolute;
-            document.querySelector('div[data-name="alpha"]').innerHTML = event.alpha ? Number(event.alpha).toFixed(2) : '';
-            document.querySelector('div[data-name="beta"]').innerHTML = event.beta ? Number(event.beta).toFixed(2) : '';
-            document.querySelector('div[data-name="gamma"]').innerHTML = event.gamma ? Number(event.gamme).toFixed(2) : '';
+            document.querySelector('div[data-name="alpha"]').innerHTML = Number(event.alpha).toFixed(2);
+            document.querySelector('div[data-name="beta"]').innerHTML = Number(event.beta).toFixed(2);
+            document.querySelector('div[data-name="gamma"]').innerHTML = Number(event.gamma).toFixed(2);
         });
     </script>
 </body>
