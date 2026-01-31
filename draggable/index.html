@@ -78,6 +78,14 @@
             containerDiv.classList.add("dragging");
         });
 
+        containerDiv.addEventListener("dragenter", function (event) {
+            containerDiv.classList.add("dragging");
+        });
+
+        containerDiv.addEventListener("drop", function (event) {
+            containerDiv.classList.remove("dragging");
+        });
+
         containerDiv.addEventListener("dragend", function (event) {
             containerDiv.classList.remove("dragging");
         });
