@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: silver;
+            width: 100dvw;
+            height: 100dvh;
+            padding: 0;
+            margin: 0;
+        }
+
+        .flex-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #container {
+            display: flex;
+            gap: 3em;
+            padding: 1em;
+            border-radius: 9px;
+            transition: all 100ms;
+        }
+
+        #container.dragging {
+            background-color: #bbb;
+        }
+
+        #source {
+            border: 2px solid black;
+            padding: 1em;
+            width: 6em;
+            aspect-ratio: 1;
+            border-radius: 9px;
+            transition: all 100ms;
+        }
+
+        #source.dragging {
+            outline: 2px solid orange;
+        }
+
+        #target {
+            border: 2px dashed #444;
+            padding: 1em;
+            width: 6em;
+            aspect-ratio: 1;
+            border-radius: 9px;
+            transition: all 100ms;
+        }
+
+        #target.dragging {
+            border: 2px solid black;
+            outline: 2px solid orange;
+        }
+    </style>
+</head>
+
+<body class="flex-center">
+    <div id="container" class="flex-center">
+        <div id="source" class="flex-center" draggable="true">Hello, world!</div>
+        <div id="target" class="flex-center"></div>
+    </div>
+
+    <script>
+        const containerDiv = document.querySelector("#container");
+        const sourceDiv = document.querySelector("#source");
+        const targetDiv = document.querySelector("#target");
+
+        // You could also listen to a higher ancestor as drag events bubble up
+        // as most other events do.
+        containerDiv.addEventListener("dragstart", function (event) {
+            containerDiv.classList.add("dragging");
+        });
+
+        containerDiv.addEventListener("dragend", function (event) {
+            containerDiv.classList.remove("dragging");
+        });
+
+        sourceDiv.addEventListener("dragstart", function (event) {
+            sourceDiv.classList.add("dragging");
+
+            // It is common to also check the event's target, so that dragging a
+            // selection contained within this element does not trigger the
+            // setData (although selecting text within the element is hard, it
+            // is not impossible).
+            if (event.target !== sourceDiv) {
+                return;
+            }
+
+            event.dataTransfer.effectAllowed = "copy";
+            event.dataTransfer.setData("text/plain", sourceDiv.innerHTML);
+        });
+
+        sourceDiv.addEventListener("pointercancel", function (event) {
+            // 
+        });
+
+        sourceDiv.addEventListener("dragend", function (event) {
+            sourceDiv.classList.remove("dragging");
+        });
+
+        targetDiv.addEventListener("dragenter", function (event) {
+            targetDiv.classList.add("dragging");
+            event.dataTransfer.dropEffect = "copy";
+        });
+
+        targetDiv.addEventListener("dragover", function (event) {
+            // Every few hundred milliseconds, two events fire: a drag event at
+            // the source node, and a dragover event at the element the drag is
+            // currently inside. Most areas of a web page or application are not
+            // valid places to drop data, so elements by default ignore any drop
+            // that happened on it. The element can elect itself to be a valid
+            // drop target by cancelling the dragover event.
+            // 
+            // The dragover event must be cancelled to allow a drop.
+            event.preventDefault();
+        });
+
+        targetDiv.addEventListener("dragleave", function (event) {
+            targetDiv.classList.remove("dragging");
+        });
+
+        targetDiv.addEventListener("drop", function (event) {
+            // You need to cancel this event using preventDefault() in order for
+            // the drop to be considered actually successful. Otherwise, the
+            // drop is also considered successful if the drop was dropping text
+            // (the data contains a text/plain item) into an editable text
+            // field. In this case, the text is inserted into the field (either
+            // at the cursor position or at the end, depending on platform
+            // conventions) and, if the dropEffect is move while the source is a
+            // selection within an editable region, the source is removed.
+            // Otherwise, for all other drag data and drop targets, the drop is
+            // considered failed.
+            event.preventDefault();
+
+            const data = event.dataTransfer.getData("text/plain");
+
+            targetDiv.innerHTML = data;
+
+            targetDiv.classList.remove("dragging");
+        });
+    </script>
+</body>
+
+</html>
