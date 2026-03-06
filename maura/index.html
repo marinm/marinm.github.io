@@ -38,7 +38,7 @@
         h1.classList.remove("loading");
       });
 
-      h1.addEventListener("click", () => {
+      h1.addEventListener("pointerdown", () => {
         if (audio.readyState !== HTMLMediaElement.HAVE_ENOUGH_DATA) {
           return;
         }
