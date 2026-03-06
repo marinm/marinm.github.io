@@ -21,14 +21,27 @@
       h1 {
         font-size: 10em;
         cursor: default;
+        transition: all 1s;
+      }
+      .loading {
+        filter: grayscale();
       }
     </style>
   </head>
   <body>
-    <h1>🚁</h1>
+    <h1 class="loading">🚁</h1>
     <script>
+      const h1 = document.querySelector("h1");
       const audio = new Audio("scream.m4a");
-      document.querySelector("h1").addEventListener("click", () => {
+
+      audio.addEventListener("canplaythrough", () => {
+        h1.classList.remove("loading");
+      });
+
+      h1.addEventListener("click", () => {
+        if (audio.readyState !== HTMLMediaElement.HAVE_ENOUGH_DATA) {
+          return;
+        }
         if (audio.paused) {
           audio.currentTime = 0;
           audio.play();
