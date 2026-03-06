@@ -1,98 +1,131 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>T-shirt cannon</title>
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta
-            name="apple-mobile-web-app-status-bar-style"
-            content="black-translucent"
-        />
-        <style>
-            body {
-                background-color: silver;
-                line-height: 1.5em;
-            }
-            a {
-                text-decoration: none;
-            }
-            a:hover {
-                text-decoration: underline;
-            }
-            .bold {
-                font-weight: bold;
-            }
-            .italic {
-                font-style: italic;
-            }
-            .block {
-                display: block;
-            }
-            .flex {
-                display: flex;
-            }
-            .justify-start {
-                justify-content: flex-start;
-            }
-            .items-center {
-                align-items: center;
-            }
-            .gap-1 {
-                gap: 1rem;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>T-shirt cannon</h1>
-        <div class="flex justify-start items-center gap-1">
-            <img src="sprites/laptop.png" alt="laptop" />
-            <img src="sprites/editor.png" alt="editor" />
-            <img src="sprites/heart.png" alt="heart" />
-            <img src="sprites/chicken.png" alt="chicken" />
-        </div>
-        <small class="block italic">Sorry for the bad pixel art. I'm learning a new skill.</small>
-        <a href="https://github.com/marinm" class="bold">github.com/marinm</a>
-        <ul>
-            <li>
-                <a href="https://365-tan.vercel.app/">365</a>
-            </li>
-            <li><a href="/code-input/">code-input</a></li>
-            <li>
-                <a href="https://connect-four-rho-liard.vercel.app/">
-                    connect-four
-                </a>
-            </li>
-            <li><a href="/custom-slider/">custom-slider</a></li>
-            <li><a href="/device-orientation-event/">device-orientation-event</a></li>
-            <li><a href="/draggable/">draggable</a></li>
-            <li><a href="/elastic-slider/">elastic-slider</a></li>
-            <li><a href="/elastic-surface/">elastic-surface</a></li>
-            <li><a href="/em-ruler/">em-ruler</a></li>
-            <li><a href="/emojis/">emojis</a></li>
-            <li><a href="/eventable/">eventable</a></li>
-            <li><a href="/geolocation/">geolocation</a></li>
-            <li><a href="https://heart-pi-lemon.vercel.app/">heart</a></li>
-            <li><a href="/importmap/">importmap</a></li>
-            <li><a href="/interval-scheduler/">interval-scheduler</a></li>
-            <li><a href="/long-press/">long-press</a></li>
-            <li><a href="/maura/">maura</a></li>
-            <li><a href="/mirror/">mirror</a></li>
-            <li><a href="/mouse-event/">mouse-event</a></li>
-            <li><a href="/named-colors/">named-colors</a></li>
-            <li><a href="/notes/">notes</a></li>
-            <li><a href="/qrcode-scanner/">qrcode-scanner</a></li>
-            <li><a href="/qrcodejs/">qrcodejs</a></li>
-            <li><a href="https://sally-gray.vercel.app/">sally</a></li>
-            <li><a href="/shared-key/">shared-key</a></li>
-            <li><a href="https://shared-secret-grid.vercel.app/">shared-secret-grid</a></li>
-            <li><a href="/sort/">sort</a></li>
-            <li><a href="/stalin-sort/">stalin-sort</a></li>
-            <li><a href="/tunescape/">tunescape</a></li>
-            <li><a href="/utc/">utc</a></li>
-            <li><a href="/visual-viewport/">visual-viewport</a></li>
-            <li><a href="/worker/">worker</a></li>
-        </ul>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>marinm homepage</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <style>
+      @font-face {
+        font-family: "Runescape UF";
+        local: "Runescape UF";
+        src: local("Runescape UF") url("runescape_uf.ttf");
+      }
+      body {
+        background-color: silver;
+        line-height: 1.5em;
+        max-width: 20em;
+        margin: auto;
+        padding: 1em 0;
+        font-family: "Runescape UF", sans-serif;
+        font-size: 10mm;
+      }
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      li {
+        border-bottom: 1px solid gray;
+      }
+      li:first-child {
+        border-top: 1px solid gray;
+      }
+      a {
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .bold {
+        font-weight: bold;
+      }
+      .italic {
+        font-style: italic;
+      }
+      .block {
+        display: block;
+      }
+      .flex {
+        display: flex;
+      }
+      .w-full {
+        width: 100%;
+      }
+      .justify-start {
+        justify-content: flex-start;
+      }
+      .items-center {
+        align-items: center;
+      }
+      .gap-1 {
+        gap: 1rem;
+      }
+      footer {
+        width: 100%;
+        margin-top: 1em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1ch;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>
+      <a href="https://github.com/marinm" class="bold">github.com/marinm</a>
+    </h1>
+
+    <ul>
+      <li>
+        <a href="https://365-tan.vercel.app/">365</a>
+      </li>
+      <li><a href="/code-input/">code-input</a></li>
+      <li>
+        <a href="https://connect-four-rho-liard.vercel.app/"> connect-four </a>
+      </li>
+      <li><a href="/custom-slider/">custom-slider</a></li>
+      <li><a href="/device-orientation-event/">device-orientation-event</a></li>
+      <li><a href="/draggable/">draggable</a></li>
+      <li><a href="/elastic-slider/">elastic-slider</a></li>
+      <li><a href="/elastic-surface/">elastic-surface</a></li>
+      <li><a href="/em-ruler/">em-ruler</a></li>
+      <li><a href="/emojis/">emojis</a></li>
+      <li><a href="/eventable/">eventable</a></li>
+      <li><a href="/geolocation/">geolocation</a></li>
+      <li><a href="https://heart-pi-lemon.vercel.app/">heart</a></li>
+      <li><a href="/importmap/">importmap</a></li>
+      <li><a href="/interval-scheduler/">interval-scheduler</a></li>
+      <li><a href="/long-press/">long-press</a></li>
+      <li><a href="/maura/">maura</a></li>
+      <li><a href="/mirror/">mirror</a></li>
+      <li><a href="/mouse-event/">mouse-event</a></li>
+      <li><a href="/named-colors/">named-colors</a></li>
+      <li><a href="/notes/">notes</a></li>
+      <li><a href="/qrcode-scanner/">qrcode-scanner</a></li>
+      <li><a href="/qrcodejs/">qrcodejs</a></li>
+      <li><a href="https://sally-gray.vercel.app/">sally</a></li>
+      <li><a href="/shared-key/">shared-key</a></li>
+      <li>
+        <a href="https://shared-secret-grid.vercel.app/">shared-secret-grid</a>
+      </li>
+      <li><a href="/sort/">sort</a></li>
+      <li><a href="/stalin-sort/">stalin-sort</a></li>
+      <li><a href="/tunescape/">tunescape</a></li>
+      <li><a href="/utc/">utc</a></li>
+      <li><a href="/visual-viewport/">visual-viewport</a></li>
+      <li><a href="/worker/">worker</a></li>
+    </ul>
+    <footer>
+      <img src="sprites/laptop.png" alt="laptop" />
+      <img src="sprites/editor.png" alt="editor" />
+      <img src="sprites/heart.png" alt="heart" />
+      <img src="sprites/chicken.png" alt="chicken" />
+    </footer>
+  </body>
 </html>
