@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting Algorithm Demo</title>
+    <style>
+        /* base reset and typography */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.4;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: #fafafa;
+            color: #333;
+        }
+        header {
+            padding: 1rem;
+            background: #007acc;
+            color: white;
+            text-align: center;
+        }
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            justify-content: center;
+        }
+        select, button {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+        }
+        #bars {
+            display: flex;
+            align-items: flex-end;
+            width: 100%;
+            max-width: 800px;
+            height: 60vh;
+            border: 1px solid #ccc;
+            background: white;
+            position: relative;
+        }
+        .bar {
+            margin: 0 1px;
+            background: #007acc;
+            transition: height 0.2s, background-color 0.2s;
+            flex: 1 1 auto;
+        }
+        .bar.active {
+            background: #ff5722;
+        }
+        footer {
+            text-align: center;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        @media (max-width: 600px) {
+            #bars { height: 50vh; }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Sorting Algorithm Demo</h1>
+</header>
+<main>
+    <div class="controls">
+        <label for="algorithm">Algorithm:</label>
+        <select id="algorithm">
+            <option value="bubble">Bubble Sort</option>
+            <option value="insertion">Insertion Sort</option>
+            <option value="merge">Merge Sort</option>
+            <option value="quick">Quick Sort</option>
+        </select>
+        <button id="start">Start</button>
+        <button id="pause" disabled>Pause</button>
+        <button id="reset">Reset</button>
+    </div>
+    <div id="bars"></div>
+</main>
+<footer>Resize window if bars look too crowded. Touch-friendly on mobile.</footer>
+<script>
+    const barsContainer = document.getElementById('bars');
+    const algorithmSelect = document.getElementById('algorithm');
+    const startButton = document.getElementById('start');
+    const pauseButton = document.getElementById('pause');
+    const resetButton = document.getElementById('reset');
+
+    let array = [];
+    let running = false;
+    let paused = false;
+    const speed = 50; // ms per step, higher -> slower
+
+    // helper that respects pause state
+    async function wait(ms) {
+        const step = 20;
+        let elapsed = 0;
+        while (elapsed < ms && running) {
+            if (paused) {
+                await new Promise(r => setTimeout(r, 50));
+            } else {
+                await new Promise(r => setTimeout(r, step));
+                elapsed += step;
+            }
+        }
+    }
+
+    function generateArray() {
+        const width = barsContainer.clientWidth;
+        const count = Math.max(10, Math.floor(width / 15));
+        array = Array.from({length: count}, () => Math.random());
+        drawBars();
+    }
+
+    function drawBars(highlightIndices=[]) {
+        barsContainer.innerHTML = '';
+        array.forEach((v,i) => {
+            const bar = document.createElement('div');
+            bar.className = 'bar';
+            if (highlightIndices.includes(i)) bar.classList.add('active');
+            bar.style.height = (v * 100) + '%';
+            barsContainer.appendChild(bar);
+        });
+    }
+
+    async function bubbleSort() {
+        const n = array.length;
+        for (let i = 0; i < n - 1 && running; i++) {
+            for (let j = 0; j < n - 1 - i && running; j++) {
+                drawBars([j, j+1]);
+                if (array[j] > array[j+1]) {
+                    [array[j], array[j+1]] = [array[j+1], array[j]];
+                }
+                await wait(speed);
+            }
+        }
+    }
+
+    async function insertionSort() {
+        const n = array.length;
+        for (let i = 1; i < n && running; i++) {
+            let key = array[i];
+            let j = i - 1;
+            while (j >= 0 && array[j] > key && running) {
+                array[j+1] = array[j];
+                drawBars([j, j+1]);
+                j--;
+                await wait(speed);
+            }
+            array[j+1] = key;
+        }
+    }
+
+    async function mergeSort(start=0, end=array.length) {
+        if (!running || end - start <= 1) return;
+        const mid = Math.floor((start + end) / 2);
+        await mergeSort(start, mid);
+        await mergeSort(mid, end);
+        const merged = [];
+        let i = start, j = mid;
+        while (i < mid && j < end && running) {
+            if (array[i] < array[j]) merged.push(array[i++]);
+            else merged.push(array[j++]);
+        }
+        while (i < mid) merged.push(array[i++]);
+        while (j < end) merged.push(array[j++]);
+        for (let k = start; k < end; k++) {
+            array[k] = merged[k - start];
+            drawBars([k]);
+            await wait(speed);
+        }
+    }
+
+    async function quickSort(start=0, end=array.length - 1) {
+        if (!running || start >= end) return;
+        const pivot = array[Math.floor((start + end) / 2)];
+        let i = start, j = end;
+        while (i <= j && running) {
+            while (array[i] < pivot) i++;
+            while (array[j] > pivot) j--;
+            if (i <= j) {
+                [array[i], array[j]] = [array[j], array[i]];
+                drawBars([i, j]);
+                i++; j--;
+                await wait(speed);
+            }
+        }
+        await quickSort(start, j);
+        await quickSort(i, end);
+    }
+
+    async function runAlgorithm() {
+        running = true;
+        startButton.disabled = true;
+        pauseButton.disabled = false;
+        const algo = algorithmSelect.value;
+        switch(algo) {
+            case 'bubble': await bubbleSort(); break;
+            case 'insertion': await insertionSort(); break;
+            case 'merge': await mergeSort(); break;
+            case 'quick': await quickSort(); break;
+        }
+        running = false;
+        paused = false;
+        pauseButton.disabled = true;
+        pauseButton.textContent = 'Pause';
+        startButton.disabled = false;
+        drawBars();
+    }
+
+    let currentRunPromise = null;
+
+    startButton.addEventListener('click', () => {
+        if (running) return;
+        paused = false;
+        startButton.disabled = true;
+        pauseButton.disabled = false;
+        currentRunPromise = runAlgorithm();
+    });
+
+    algorithmSelect.addEventListener('change', () => {
+        if (running) {
+            // stop current sort; when finished, automatically start new one
+            running = false;
+            paused = false;
+            pauseButton.disabled = true;
+            pauseButton.textContent = 'Pause';
+            // ensure we restart after the previous run resolves
+            if (currentRunPromise) {
+                currentRunPromise.then(() => {
+                    // don't restart if user hit reset meanwhile
+                    if (!running) {
+                        startButton.disabled = true;
+                        pauseButton.disabled = false;
+                        currentRunPromise = runAlgorithm();
+                    }
+                });
+            }
+        }
+    });
+
+    pauseButton.addEventListener('click', () => {
+        if (!running) return;
+        paused = !paused;
+        pauseButton.textContent = paused ? 'Resume' : 'Pause';
+    });
+
+    resetButton.addEventListener('click', () => {
+        running = false;
+        paused = false;
+        pauseButton.disabled = true;
+        pauseButton.textContent = 'Pause';
+        startButton.disabled = false;
+        generateArray();
+    });
+
+    window.addEventListener('resize', () => {
+        if (!running) generateArray();
+    });
+
+    // initialize
+    generateArray();
+</script>
+</body>
+</html>
