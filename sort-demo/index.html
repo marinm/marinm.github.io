@@ -267,7 +267,8 @@
     });
 
     window.addEventListener('resize', () => {
-        if (!running) generateArray();
+        // keep current array values, just adjust bars to new width
+        if (!running) drawBars();
     });
 
     // initialize
