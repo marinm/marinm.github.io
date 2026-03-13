@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Box Model Document</title>
+    <style>
+        body {
+            background-color: #808080;
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .paper {
+            width: 8.5in;
+            height: 11in;
+            box-sizing: border-box;
+            padding: 0.5in;
+            background-color: white;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .working-area {
+            width: 100%;
+            height: 100%;
+        }
+
+        .box {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            height: 100%;
+            border: 1px solid transparent;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .resize-handle {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            background: rgba(0, 0, 255, 0.5);
+            cursor: nw-resize;
+            z-index: 10;
+        }
+
+        .box.selected {
+            outline: 2px solid blue;
+        }
+
+        .toolbar {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background-color: white;
+            padding: 10px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        #properties {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        #properties h4 {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        #properties .group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        #properties label {
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        button {
+            margin: 0 5px;
+        }
+
+        @media print {
+            body {
+                background-color: white;
+                margin: 0;
+                padding: 0;
+            }
+
+            .paper {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                box-shadow: none;
+                box-sizing: border-box;
+                padding: 0.5in;
+            }
+
+            .toolbar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <button id="splitBtn">Split</button>
+        <button id="toggleDirBtn">Toggle Direction</button>
+        <button id="togglePropsBtn">Properties</button>
+        <div id="properties" style="display: none; margin-top: 10px;">
+            <h4>Padding (px)</h4>
+            <div class="group">
+                <label>Top: <input type="number" id="paddingTop" min="0"></label>
+                <label>Right: <input type="number" id="paddingRight" min="0"></label>
+                <label>Bottom: <input type="number" id="paddingBottom" min="0"></label>
+                <label>Left: <input type="number" id="paddingLeft" min="0"></label>
+            </div>
+            <h4>Border</h4>
+            <div class="group">
+                <label>Top W: <input type="number" id="borderTopWidth" min="0"></label>
+                <label>Top C: <input type="color" id="borderTopColor"></label>
+                <label>Right W: <input type="number" id="borderRightWidth" min="0"></label>
+                <label>Right C: <input type="color" id="borderRightColor"></label>
+            </div>
+            <div class="group">
+                <label>Bottom W: <input type="number" id="borderBottomWidth" min="0"></label>
+                <label>Bottom C: <input type="color" id="borderBottomColor"></label>
+                <label>Left W: <input type="number" id="borderLeftWidth" min="0"></label>
+                <label>Left C: <input type="color" id="borderLeftColor"></label>
+            </div>
+            <h4>Background</h4>
+            <div class="group">
+                <label>Color: <input type="color" id="backgroundColor"></label>
+            </div>
+        </div>
+    </div>
+    <div class="paper">
+        <div class="working-area">
+            <div class="box selected" id="rootBox">
+                <div class="resize-handle"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedBox = document.getElementById('rootBox');
+
+        function updateProperties() {
+            const style = getComputedStyle(selectedBox);
+            document.getElementById('paddingTop').value = parseInt(style.paddingTop) || 0;
+            document.getElementById('paddingRight').value = parseInt(style.paddingRight) || 0;
+            document.getElementById('paddingBottom').value = parseInt(style.paddingBottom) || 0;
+            document.getElementById('paddingLeft').value = parseInt(style.paddingLeft) || 0;
+            document.getElementById('borderTopWidth').value = parseInt(style.borderTopWidth) || 0;
+            document.getElementById('borderRightWidth').value = parseInt(style.borderRightWidth) || 0;
+            document.getElementById('borderBottomWidth').value = parseInt(style.borderBottomWidth) || 0;
+            document.getElementById('borderLeftWidth').value = parseInt(style.borderLeftWidth) || 0;
+
+            function rgbToHex(rgb) {
+                const result = rgb.match(/\d+/g);
+                if (!result) return '#ffffff';
+                return '#' + result.map(x => parseInt(x).toString(16).padStart(2, '0')).join('');
+            }
+
+            document.getElementById('borderTopColor').value = rgbToHex(style.borderTopColor);
+            document.getElementById('borderRightColor').value = rgbToHex(style.borderRightColor);
+            document.getElementById('borderBottomColor').value = rgbToHex(style.borderBottomColor);
+            document.getElementById('borderLeftColor').value = rgbToHex(style.borderLeftColor);
+            document.getElementById('backgroundColor').value = rgbToHex(style.backgroundColor);
+        }
+
+        document.querySelectorAll('.box').forEach(box => {
+            box.addEventListener('click', function(e) {
+                e.stopPropagation();
+                document.querySelectorAll('.box').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedBox = this;
+                updateProperties();
+            });
+        });
+
+        document.getElementById('splitBtn').addEventListener('click', function() {
+            if (!selectedBox) return;
+            selectedBox.innerHTML = '';
+            const child1 = document.createElement('div');
+            child1.className = 'box';
+            child1.style.flex = '1';
+            const handle1 = document.createElement('div');
+            handle1.className = 'resize-handle';
+            child1.appendChild(handle1);
+            child1.addEventListener('click', function(e) {
+                e.stopPropagation();
+                document.querySelectorAll('.box').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedBox = this;
+                updateProperties();
+            });
+            const child2 = document.createElement('div');
+            child2.className = 'box';
+            child2.style.flex = '1';
+            const handle2 = document.createElement('div');
+            handle2.className = 'resize-handle';
+            child2.appendChild(handle2);
+            child2.addEventListener('click', function(e) {
+                e.stopPropagation();
+                document.querySelectorAll('.box').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedBox = this;
+                updateProperties();
+            });
+            selectedBox.appendChild(child1);
+            selectedBox.appendChild(child2);
+            selectedBox.classList.remove('selected');
+            selectedBox = child1;
+            child1.classList.add('selected');
+            updateProperties();
+        });
+
+        document.getElementById('toggleDirBtn').addEventListener('click', function() {
+            if (!selectedBox) return;
+            const currentDir = selectedBox.style.flexDirection || 'row';
+            selectedBox.style.flexDirection = currentDir === 'row' ? 'column' : 'row';
+        });
+
+        document.getElementById('togglePropsBtn').addEventListener('click', function() {
+            const props = document.getElementById('properties');
+            props.style.display = props.style.display === 'none' ? 'block' : 'none';
+        });
+
+        const inputs = ['paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'backgroundColor'];
+        inputs.forEach(id => {
+            document.getElementById(id).addEventListener('input', function() {
+                if (!selectedBox) return;
+                const value = this.value;
+                if (id.startsWith('padding')) {
+                    selectedBox.style[id] = value + 'px';
+                } else if (id.includes('Width')) {
+                    selectedBox.style[id] = value + 'px';
+                } else {
+                    selectedBox.style[id] = value;
+                }
+            });
+        });
+
+        let dragging = false;
+        let dragBox = null;
+        let startX, startY, startWidth, startHeight;
+
+        document.addEventListener('mousedown', function(e) {
+            if (e.target.classList.contains('resize-handle')) {
+                e.preventDefault();
+                dragging = true;
+                dragBox = e.target.parentElement;
+                startX = e.clientX;
+                startY = e.clientY;
+                startWidth = dragBox.offsetWidth;
+                startHeight = dragBox.offsetHeight;
+            }
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (dragging && dragBox) {
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+                const parent = dragBox.parentElement;
+                const parentWidth = parent.offsetWidth;
+                const parentHeight = parent.offsetHeight;
+                const minWidth = parentWidth * 0.1;
+                const maxWidth = parentWidth * 0.9;
+                const minHeight = parentHeight * 0.1;
+                const maxHeight = parentHeight * 0.9;
+                const newWidth = Math.max(minWidth, Math.min(maxWidth, startWidth + deltaX));
+                const newHeight = Math.max(minHeight, Math.min(maxHeight, startHeight + deltaY));
+                dragBox.style.flex = 'none';
+                if (parent.classList.contains('box')) {
+                    const dir = parent.style.flexDirection || 'row';
+                    if (dir === 'row') {
+                        dragBox.style.width = newWidth + 'px';
+                        dragBox.style.height = '100%';
+                    } else {
+                        dragBox.style.height = newHeight + 'px';
+                        dragBox.style.width = '100%';
+                    }
+                } else {
+                    // root box
+                    dragBox.style.width = newWidth + 'px';
+                    dragBox.style.height = newHeight + 'px';
+                }
+            }
+        });
+
+        document.addEventListener('mouseup', function() {
+            dragging = false;
+            dragBox = null;
+        });
+    </script>
+</body>
+</html>
