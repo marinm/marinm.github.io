@@ -1,6 +1,6 @@
 import { randomCode } from "./randomCode.js";
 
-const SERVER_URL = "https://marinm.net/broadcast";
+const SERVER_URL = "https://broadcast.marinm.net/";
 const tempSharedKeyConnection = null;
 
 const currentScreenId = "screen-code-input";
