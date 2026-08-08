@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Spotlight</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="c"></canvas>
+    <script>
+        const canvas = document.getElementById('c');
+        const ctx = canvas.getContext('2d');
+
+        let width, height, dpr;
+        function resize() {
+            dpr = window.devicePixelRatio || 1;
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        let mouseX = width / 2;
+        let mouseY = height / 2;
+        let hasMouse = false;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            hasMouse = true;
+        });
+
+        window.addEventListener('mouseleave', () => {
+            hasMouse = false;
+        });
+
+        // Subtle flicker for a realistic light-source feel.
+        let flickerPhase = Math.random() * 1000;
+
+        function lerpColor(a, b, t) {
+            return [
+                a[0] + (b[0] - a[0]) * t,
+                a[1] + (b[1] - a[1]) * t,
+                a[2] + (b[2] - a[2]) * t,
+            ];
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Base black background.
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, width, height);
+
+            if (hasMouse) {
+                const smoothX = mouseX;
+                const smoothY = mouseY;
+
+                flickerPhase += 0.05;
+                const flicker =
+                    1 +
+                    Math.sin(flickerPhase * 2.3) * 0.015 +
+                    Math.sin(flickerPhase * 5.1) * 0.008 +
+                    (Math.random() - 0.5) * 0.01;
+
+                const radius = 300 * flicker;
+
+                // Single continuous glow: white-hot center easing out to black.
+                // Built from many finely-spaced stops on a smooth power curve so
+                // there is no perceptible banding or layer boundary anywhere.
+                let glow = ctx.createRadialGradient(
+                    smoothX, smoothY, 0,
+                    smoothX, smoothY, radius
+                );
+                const coreColor = [255, 253, 220];
+                const midColor = [255, 221, 60];
+                const edgeColor = [255, 185, 10];
+                const steps = 48;
+                for (let i = 0; i <= steps; i++) {
+                    const t = i / steps;
+                    // Quintic ease-out: fast fade near the center, very long soft tail.
+                    const alpha = Math.pow(1 - t, 5) * 0.95;
+                    // Blend core -> mid -> edge color across the same curve.
+                    const blend = t < 0.5 ? t * 2 : 1;
+                    const warm = t < 0.5
+                        ? lerpColor(coreColor, midColor, blend)
+                        : lerpColor(midColor, edgeColor, (t - 0.5) * 2);
+                    glow.addColorStop(t, `rgba(${warm[0]}, ${warm[1]}, ${warm[2]}, ${alpha.toFixed(4)})`);
+                }
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.arc(smoothX, smoothY, radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        requestAnimationFrame(draw);
+    </script>
+</body>
+
+</html>
