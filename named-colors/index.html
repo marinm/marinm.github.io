@@ -1,218 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Named colors</title>
-        <style>
-			body {
-				text-align: center;
-			}
-            .poster {
-                display: grid;
-                grid-template-columns: repeat(4, 1fr);
-                max-width: fit-content;
-                margin: auto;
-                gap: 1ch;
-				margin-top: 4ch;
-            }
-            .block {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                gap: 0ch;
-            }
-            .sample {
-                width: 8ch;
-                height: 8ch;
-            }
-        </style>
-    </head>
-    <body>
-        <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/named-color"
-            >MDN &lt;named-colors&gt;
-        </a>
-        &#x2022;
-        <a href="https://www.w3.org/TR/css-color-4/#named-colors">
-            W3C CSS Colors Level 4
-        </a>
-        &#x2022;
-        <a href="https://www.w3.org/TR/css-color-3/#ref-X11COLORS">
-            X11COLORS
-        </a>
-        <div class="poster"></div>
-        <script>
-            const names = [
-                "aliceblue",
-                "antiquewhite",
-                "aqua",
-                "aquamarine",
-                "azure",
-                "beige",
-                "bisque",
-                "black",
-                "blanchedalmond",
-                "blue",
-                "blueviolet",
-                "brown",
-                "burlywood",
-                "cadetblue",
-                "chartreuse",
-                "chocolate",
-                "coral",
-                "cornflowerblue",
-                "cornsilk",
-                "crimson",
-                "cyan",
-                "darkblue",
-                "darkcyan",
-                "darkgoldenrod",
-                "darkgray",
-                "darkgreen",
-                "darkgrey",
-                "darkkhaki",
-                "darkmagenta",
-                "darkolivegreen",
-                "darkorange",
-                "darkorchid",
-                "darkred",
-                "darksalmon",
-                "darkseagreen",
-                "darkslateblue",
-                "darkslategrey",
-                "darkturquoise",
-                "darkviolet",
-                "deeppink",
-                "deepskyblue",
-                "dimgray",
-                "dimgrey",
-                "dodgerblue",
-                "firebrick",
-                "floralwhite",
-                "forestgreen",
-                "fuchsia",
-                "gainsboro",
-                "ghostwhite",
-                "gold",
-                "goldenrod",
-                "gray",
-                "green",
-                "greenyellow",
-                "grey",
-                "honeydew",
-                "hotpink",
-                "indianred",
-                "indigo",
-                "ivory",
-                "khaki",
-                "lavender",
-                "lavenderblush",
-                "lawngreen",
-                "lemonchiffon",
-                "lightblue",
-                "lightcoral",
-                "lightcyan",
-                "lightgoldenrodyellow",
-                "lightgray",
-                "lightgreen",
-                "lightgrey",
-                "lightpink",
-                "lightsalmon",
-                "lightseagreen",
-                "lightskyblue",
-                "lightslategray",
-                "lightslategrey",
-                "lightsteelblue",
-                "lightyellow",
-                "lime",
-                "limegreen",
-                "linen",
-                "magenta",
-                "maroon",
-                "mediumaquamarine",
-                "mediumblue",
-                "mediumorchid",
-                "mediumpurple",
-                "mediumseagreen",
-                "mediumslateblue",
-                "mediumspringgreen",
-                "mediumturquoise",
-                "mediumvioletred",
-                "midnightblue",
-                "mintcream",
-                "mistyrose",
-                "moccasin",
-                "navajowhite",
-                "navy",
-                "oldlace",
-                "olive",
-                "olivedrab",
-                "orange",
-                "orangered",
-                "orchid",
-                "palegoldenrod",
-                "palegreen",
-                "paleturquoise",
-                "palevioletred",
-                "papayawhip",
-                "peachpuff",
-                "peru",
-                "pink",
-                "plum",
-                "powderblue",
-                "purple",
-                "rebeccapurple",
-                "red",
-                "rosybrown",
-                "royalblue",
-                "saddlebrown",
-                "salmon",
-                "sandybrown",
-                "seagreen",
-                "seashell",
-                "sienna",
-                "silver",
-                "skyblue",
-                "slateblue",
-                "slategray",
-                "slategrey",
-                "snow",
-                "springgreen",
-                "steelblue",
-                "tan",
-                "teal",
-                "thistle",
-                "tomato",
-                "turquoise",
-                "violet",
-                "wheat",
-                "whitesmoke",
-                "yellow",
-                "yellowgreen",
-            ];
 
-            const posterDiv = document.querySelector(".poster");
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Named colors</title>
+    <style>
+        body {
+            text-align: center;
+            padding: 0;
+            margin: 0;
+        }
 
-            names.forEach((name) => posterDiv.appendChild(colorBlock(name)));
+        .colors {
+            font-family: monospace;
+        }
 
-            function colorBlock(name) {
-                const blockDiv = document.createElement("div");
-                blockDiv.classList.add("block");
+        .color {
+            display: grid;
+            grid-template-columns: 24ch 10ch;
+            justify-content: center;
+            padding: 4ch 2ch;
+            text-align: left;
+        }
 
-                const sampleDiv = document.createElement("div");
-                sampleDiv.classList.add("sample");
-                sampleDiv.style.backgroundColor = `${name}`;
+        .hex {
+            text-align: right;
+            font-family: monospace;
+        }
+    </style>
+</head>
 
-                const nameDiv = document.createElement("div");
-                nameDiv.classList.add("name");
-                nameDiv.innerText = `${name}`;
+<body>
+    <!-- References
+      --   https://developer.mozilla.org/en-US/docs/Web/CSS/named-color
+      --   https://www.w3.org/TR/css-color-4/#named-colors
+      -->
+    <div class="colors"></div>
+    <script>
+        const colors = [
+            { name: "black", hex: "#000000" },
+            { name: "dimgray", hex: "#696969" },
+            { name: "dimgrey", hex: "#696969" },
+            { name: "gray", hex: "#808080" },
+            { name: "grey", hex: "#808080" },
+            { name: "darkgray", hex: "#a9a9a9" },
+            { name: "darkgrey", hex: "#a9a9a9" },
+            { name: "silver", hex: "#c0c0c0" },
+            { name: "lightgray", hex: "#d3d3d3" },
+            { name: "lightgrey", hex: "#d3d3d3" },
+            { name: "gainsboro", hex: "#dcdcdc" },
+            { name: "whitesmoke", hex: "#f5f5f5" },
+            { name: "white", hex: "#ffffff" },
+            { name: "maroon", hex: "#800000" },
+            { name: "darkred", hex: "#8b0000" },
+            { name: "brown", hex: "#a52a2a" },
+            { name: "firebrick", hex: "#b22222" },
+            { name: "red", hex: "#ff0000" },
+            { name: "indianred", hex: "#cd5c5c" },
+            { name: "rosybrown", hex: "#bc8f8f" },
+            { name: "lightcoral", hex: "#f08080" },
+            { name: "snow", hex: "#fffafa" },
+            { name: "mistyrose", hex: "#ffe4e1" },
+            { name: "salmon", hex: "#fa8072" },
+            { name: "tomato", hex: "#ff6347" },
+            { name: "darksalmon", hex: "#e9967a" },
+            { name: "coral", hex: "#ff7f50" },
+            { name: "orangered", hex: "#ff4500" },
+            { name: "lightsalmon", hex: "#ffa07a" },
+            { name: "sienna", hex: "#a0522d" },
+            { name: "seashell", hex: "#fff5ee" },
+            { name: "saddlebrown", hex: "#8b4513" },
+            { name: "chocolate", hex: "#d2691e" },
+            { name: "sandybrown", hex: "#f4a460" },
+            { name: "peachpuff", hex: "#ffdab9" },
+            { name: "peru", hex: "#cd853f" },
+            { name: "linen", hex: "#faf0e6" },
+            { name: "bisque", hex: "#ffe4c4" },
+            { name: "darkorange", hex: "#ff8c00" },
+            { name: "burlywood", hex: "#deb887" },
+            { name: "tan", hex: "#d2b48c" },
+            { name: "antiquewhite", hex: "#faebd7" },
+            { name: "navajowhite", hex: "#ffdead" },
+            { name: "blanchedalmond", hex: "#ffebcd" },
+            { name: "papayawhip", hex: "#ffefd5" },
+            { name: "moccasin", hex: "#ffe4b5" },
+            { name: "orange", hex: "#ffa500" },
+            { name: "wheat", hex: "#f5deb3" },
+            { name: "oldlace", hex: "#fdf5e6" },
+            { name: "floralwhite", hex: "#fffaf0" },
+            { name: "darkgoldenrod", hex: "#b8860b" },
+            { name: "goldenrod", hex: "#daa520" },
+            { name: "cornsilk", hex: "#fff8dc" },
+            { name: "gold", hex: "#ffd700" },
+            { name: "khaki", hex: "#f0e68c" },
+            { name: "lemonchiffon", hex: "#fffacd" },
+            { name: "palegoldenrod", hex: "#eee8aa" },
+            { name: "darkkhaki", hex: "#bdb76b" },
+            { name: "olive", hex: "#808000" },
+            { name: "yellow", hex: "#ffff00" },
+            { name: "lightgoldenrodyellow", hex: "#fafad2" },
+            { name: "beige", hex: "#f5f5dc" },
+            { name: "lightyellow", hex: "#ffffe0" },
+            { name: "ivory", hex: "#fffff0" },
+            { name: "olivedrab", hex: "#6b8e23" },
+            { name: "yellowgreen", hex: "#9acd32" },
+            { name: "darkolivegreen", hex: "#556b2f" },
+            { name: "greenyellow", hex: "#adff2f" },
+            { name: "chartreuse", hex: "#7fff00" },
+            { name: "lawngreen", hex: "#7cfc00" },
+            { name: "darkgreen", hex: "#006400" },
+            { name: "green", hex: "#008000" },
+            { name: "forestgreen", hex: "#228b22" },
+            { name: "lime", hex: "#00ff00" },
+            { name: "limegreen", hex: "#32cd32" },
+            { name: "darkseagreen", hex: "#8fbc8f" },
+            { name: "lightgreen", hex: "#90ee90" },
+            { name: "palegreen", hex: "#98fb98" },
+            { name: "honeydew", hex: "#f0fff0" },
+            { name: "seagreen", hex: "#2e8b57" },
+            { name: "mediumseagreen", hex: "#3cb371" },
+            { name: "springgreen", hex: "#00ff7f" },
+            { name: "mintcream", hex: "#f5fffa" },
+            { name: "mediumspringgreen", hex: "#00fa9a" },
+            { name: "mediumaquamarine", hex: "#66cdaa" },
+            { name: "aquamarine", hex: "#7fffd4" },
+            { name: "turquoise", hex: "#40e0d0" },
+            { name: "lightseagreen", hex: "#20b2aa" },
+            { name: "mediumturquoise", hex: "#48d1cc" },
+            { name: "darkslategray", hex: "#2f4f4f" },
+            { name: "darkslategrey", hex: "#2f4f4f" },
+            { name: "teal", hex: "#008080" },
+            { name: "darkcyan", hex: "#008b8b" },
+            { name: "aqua", hex: "#00ffff" },
+            { name: "cyan", hex: "#00ffff" },
+            { name: "paleturquoise", hex: "#afeeee" },
+            { name: "lightcyan", hex: "#e0ffff" },
+            { name: "azure", hex: "#f0ffff" },
+            { name: "darkturquoise", hex: "#00ced1" },
+            { name: "cadetblue", hex: "#5f9ea0" },
+            { name: "powderblue", hex: "#b0e0e6" },
+            { name: "lightblue", hex: "#add8e6" },
+            { name: "deepskyblue", hex: "#00bfff" },
+            { name: "skyblue", hex: "#87ceeb" },
+            { name: "lightskyblue", hex: "#87cefa" },
+            { name: "steelblue", hex: "#4682b4" },
+            { name: "aliceblue", hex: "#f0f8ff" },
+            { name: "dodgerblue", hex: "#1e90ff" },
+            { name: "slategray", hex: "#708090" },
+            { name: "slategrey", hex: "#708090" },
+            { name: "lightslategray", hex: "#778899" },
+            { name: "lightslategrey", hex: "#778899" },
+            { name: "lightsteelblue", hex: "#b0c4de" },
+            { name: "cornflowerblue", hex: "#6495ed" },
+            { name: "royalblue", hex: "#4169e1" },
+            { name: "navy", hex: "#000080" },
+            { name: "midnightblue", hex: "#191970" },
+            { name: "darkblue", hex: "#00008b" },
+            { name: "mediumblue", hex: "#0000cd" },
+            { name: "blue", hex: "#0000ff" },
+            { name: "lavender", hex: "#e6e6fa" },
+            { name: "ghostwhite", hex: "#f8f8ff" },
+            { name: "slateblue", hex: "#6a5acd" },
+            { name: "darkslateblue", hex: "#483d8b" },
+            { name: "mediumslateblue", hex: "#7b68ee" },
+            { name: "mediumpurple", hex: "#9370db" },
+            { name: "rebeccapurple", hex: "#663399" },
+            { name: "blueviolet", hex: "#8a2be2" },
+            { name: "indigo", hex: "#4b0082" },
+            { name: "darkorchid", hex: "#9932cc" },
+            { name: "darkviolet", hex: "#9400d3" },
+            { name: "mediumorchid", hex: "#ba55d3" },
+            { name: "purple", hex: "#800080" },
+            { name: "darkmagenta", hex: "#8b008b" },
+            { name: "fuchsia", hex: "#ff00ff" },
+            { name: "magenta", hex: "#ff00ff" },
+            { name: "violet", hex: "#ee82ee" },
+            { name: "plum", hex: "#dda0dd" },
+            { name: "thistle", hex: "#d8bfd8" },
+            { name: "orchid", hex: "#da70d6" },
+            { name: "mediumvioletred", hex: "#c71585" },
+            { name: "deeppink", hex: "#ff1493" },
+            { name: "hotpink", hex: "#ff69b4" },
+            { name: "lavenderblush", hex: "#fff0f5" },
+            { name: "palevioletred", hex: "#db7093" },
+            { name: "crimson", hex: "#dc143c" },
+            { name: "pink", hex: "#ffc0cb" },
+            { name: "lightpink", hex: "#ffb6c1" },
+        ];
 
-                blockDiv.appendChild(sampleDiv);
-                blockDiv.appendChild(nameDiv);
+        const colorsDiv = document.querySelector(".colors");
 
-                return blockDiv;
-            }
-        </script>
-    </body>
+        colors.forEach((color) => colorsDiv.appendChild(colorRow(color)));
+
+        function colorRow({ name, hex }) {
+            const rowDiv = document.createElement("div");
+            rowDiv.classList.add("color");
+            rowDiv.style.backgroundColor = name;
+            rowDiv.style.color = textColor(hex);
+
+            const nameDiv = document.createElement("div");
+            nameDiv.innerText = name;
+
+            const hexDiv = document.createElement("div");
+            hexDiv.classList.add("hex");
+            hexDiv.innerText = hex;
+
+            rowDiv.appendChild(nameDiv);
+            rowDiv.appendChild(hexDiv);
+
+            return rowDiv;
+        }
+
+        // Picks black or white, whichever has the higher WCAG contrast ratio
+        function textColor(hex) {
+            const [r, g, b] = [1, 3, 5].map((i) => {
+                const channel = parseInt(hex.slice(i, i + 2), 16) / 255;
+                return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+            });
+            const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+            // Contrast with black is (L + 0.05) / 0.05; with white, 1.05 / (L + 0.05)
+            return luminance > Math.sqrt(1.05 * 0.05) - 0.05 ? "black" : "white";
+        }
+    </script>
+</body>
+
 </html>
