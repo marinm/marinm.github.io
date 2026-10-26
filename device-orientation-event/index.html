@@ -101,7 +101,6 @@
         }
 
         function onDeviceorientation(event) {
-            $('div[data-name="absolute"]').innerHTML = event.absolute;
             $('div[data-name="alpha"]').innerHTML = Number(event.alpha).toFixed(0);
             $('div[data-name="beta"]').innerHTML = Number(event.beta).toFixed(0);
             $('div[data-name="gamma"]').innerHTML = Number(event.gamma).toFixed(0);
