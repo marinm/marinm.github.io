@@ -42,7 +42,10 @@
 <body>
     <div id="container">
         <div id="not-available-content" class="hidden">
-            Hardware not supported
+            <!-- Error message here -->
+        </div>
+        <div id="request-permission">
+            Tap to enable device orientation
         </div>
         <div id="available-content" class="hidden">
             <table>
@@ -80,7 +83,6 @@
                 </tbody>
             </table>
         </div>
-
     </div>
 
     <script>
@@ -88,35 +90,26 @@
             return document.querySelector(selector);
         }
 
-        function showNotAvailable() {
-            $('#not-available-content').classList.remove('hidden');
-            $('#available-content').classList.add('hidden');
+        function show(selector) {
+            $(selector).classList.remove('hidden');
+        }
+
+        function hide(selector) {
+            $(selector).classList.add('hidden');
+        }
+
+        function setError(message) {
+            show('#not-available-content');
+            hide('#request-permission');
+            hide('#available-content');
+
+            $('#not-available-content').innerText = message;
         }
 
         function showAvailable() {
-            $('#not-available-content').classList.add('hidden');
-            $('#available-content').classList.remove('hidden');
-        }
-
-        if ("DeviceOrientationEvent" in window) {
-            if ("requestPermission" in window.DeviceOrientationEvent) {
-                showAvailable();
-
-                setMessage("DeviceOrientationEvent available, requestPermission available. Tap to allow 'deviceorientation' events.");
-                document.body.addEventListener("click", async (event) => {
-                    const permission = await DeviceOrientationEvent.requestPermission();
-                    if (permission == "granted") {
-                        setMessage("DeviceOrientationEvent permission granted");
-                        window.addEventListener("deviceorientation", onDeviceorientation);
-                    } else {
-                        setMessage("DeviceOrientationEvent permission not granted");
-                    }
-                });
-            } else {
-                showNotAvailable();
-            }
-        } else {
-            showNotAvailable();
+            hide('#not-available-content');
+            hide('#request-permission');
+            show('#available-content');
         }
 
         function onDeviceorientation(event) {
@@ -125,6 +118,48 @@
             $('div[data-name="beta"]').innerHTML = Number(event.beta).toFixed(2);
             $('div[data-name="gamma"]').innerHTML = Number(event.gamma).toFixed(2);
         }
+
+        async function requestPermission() {
+            const permission = await DeviceOrientationEvent.requestPermission();
+            return permission == "granted";
+        }
+
+        async function onRequestPermissionClick() {
+            const permissionGranted = await requestPermission();
+
+            if (!permissionGranted) {
+                setError("Permission not granted");
+                return;
+            }
+
+            showAvailable();
+
+            window.addEventListener("deviceorientation", onDeviceorientation);
+        }
+
+        function showRequestPermission() {
+            hide('#not-available-content');
+            show('#request-permission');
+            hide('#available-content');
+
+            $('#request-permission').addEventListener("click", onRequestPermissionClick);
+        }
+
+        function init() {
+            if (!("DeviceOrientationEvent" in window)) {
+                setError("Hardware not supported");
+                return;
+            }
+
+            if (!("requestPermission" in window.DeviceOrientationEvent)) {
+                setError("Hardware not supported");
+                return;
+            }
+
+            showRequestPermission();
+        }
+
+        init();
     </script>
 </body>
 
