@@ -32,56 +32,76 @@
         .text-right {
             text-align: right;
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 
 <body>
     <div id="container">
-        device-orientation-event
-        <p id="message"></p>
-        <table>
-            <thead>
-                <tr>
-                    <th>Variable</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>absolute</td>
-                    <td class="font-mono text-right">
-                        <div data-name="absolute"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>alpha</td>
-                    <td class="font-mono text-right">
-                        <div data-name="alpha"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>beta</td>
-                    <td class="font-mono text-right">
-                        <div data-name="beta"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>gamma</td>
-                    <td class="font-mono text-right">
-                        <div data-name="gamma"></div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div id="not-available-content" class="hidden">
+            Hardware not supported
+        </div>
+        <div id="available-content" class="hidden">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Variable</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>absolute</td>
+                        <td class="font-mono text-right">
+                            <div data-name="absolute"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>alpha</td>
+                        <td class="font-mono text-right">
+                            <div data-name="alpha"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>beta</td>
+                        <td class="font-mono text-right">
+                            <div data-name="beta"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>gamma</td>
+                        <td class="font-mono text-right">
+                            <div data-name="gamma"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 
     <script>
-        function setMessage(message) {
-            document.querySelector('#message').innerHTML = message;
+        function $(selector) {
+            return document.querySelector(selector);
+        }
+
+        function showNotAvailable() {
+            $('#not-available-content').classList.remove('hidden');
+            $('#available-content').classList.add('hidden');
+        }
+
+        function showAvailable() {
+            $('#not-available-content').classList.add('hidden');
+            $('#available-content').classList.remove('hidden');
         }
 
         if ("DeviceOrientationEvent" in window) {
             if ("requestPermission" in window.DeviceOrientationEvent) {
+                showAvailable();
+
                 setMessage("DeviceOrientationEvent available, requestPermission available. Tap to allow 'deviceorientation' events.");
                 document.body.addEventListener("click", async (event) => {
                     const permission = await DeviceOrientationEvent.requestPermission();
@@ -92,10 +112,10 @@
                     }
                 });
             } else {
-                setMessage("DeviceOrientationEvent available, requestPermission not available");
+                showNotAvailable();
             }
         } else {
-            setMessage("DeviceOrientationEvent not available");
+            showNotAvailable();
         }
 
         window.addEventListener("deviceorientation", (event) => {
