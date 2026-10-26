@@ -107,6 +107,7 @@
                     const permission = await DeviceOrientationEvent.requestPermission();
                     if (permission == "granted") {
                         setMessage("DeviceOrientationEvent permission granted");
+                        window.addEventListener("deviceorientation", onDeviceorientation);
                     } else {
                         setMessage("DeviceOrientationEvent permission not granted");
                     }
@@ -118,12 +119,12 @@
             showNotAvailable();
         }
 
-        window.addEventListener("deviceorientation", (event) => {
-            document.querySelector('div[data-name="absolute"]').innerHTML = event.absolute;
-            document.querySelector('div[data-name="alpha"]').innerHTML = Number(event.alpha).toFixed(2);
-            document.querySelector('div[data-name="beta"]').innerHTML = Number(event.beta).toFixed(2);
-            document.querySelector('div[data-name="gamma"]').innerHTML = Number(event.gamma).toFixed(2);
-        });
+        function onDeviceorientation(event) {
+            $('div[data-name="absolute"]').innerHTML = event.absolute;
+            $('div[data-name="alpha"]').innerHTML = Number(event.alpha).toFixed(2);
+            $('div[data-name="beta"]').innerHTML = Number(event.beta).toFixed(2);
+            $('div[data-name="gamma"]').innerHTML = Number(event.gamma).toFixed(2);
+        }
     </script>
 </body>
 
