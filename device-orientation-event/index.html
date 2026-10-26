@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Device Orientation</title>
     <style>
         body {
             background-color: black;
@@ -111,17 +111,24 @@
             return permission == "granted";
         }
 
-        async function onRequestPermissionClick() {
-            const permissionGranted = await requestPermission();
-
-            if (!permissionGranted) {
-                setError("Permission not granted");
-                return;
-            }
-
+        function startListening() {
             showAvailable();
 
             window.addEventListener("deviceorientation", onDeviceorientation);
+        }
+
+        async function onRequestPermissionClick() {
+            try {
+                if (!await requestPermission()) {
+                    setError("Permission not granted");
+                    return;
+                }
+            } catch (error) {
+                setError("Permission request failed");
+                return;
+            }
+
+            startListening();
         }
 
         function showRequestPermission() {
@@ -138,8 +145,9 @@
                 return;
             }
 
+            // No permission needed
             if (!("requestPermission" in window.DeviceOrientationEvent)) {
-                setError("Hardware not supported");
+                startListening();
                 return;
             }
 
