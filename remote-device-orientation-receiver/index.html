@@ -56,8 +56,18 @@
         background: green;
         transform: translateZ(calc(var(--depth) / 2));
       }
+      .front::after {
+        content: "";
+        position: absolute;
+        left: 20%;
+        top: 30%;
+        width: 60%;
+        height: 40%;
+        background: #fff;
+        clip-path: polygon(50% 0, 100% 40%, 70% 40%, 70% 100%, 30% 100%, 30% 40%, 0 40%);
+      }
       .back {
-        background: red;
+        background: #333;
         transform: rotateY(180deg) translateZ(calc(var(--depth) / 2));
       }
       .left,

@@ -9,10 +9,20 @@
       body {
         margin: 0;
         padding: 1rem;
-        background: #000;
+        background: green;
         color: #fff;
         font-family: monospace;
         text-align: center;
+      }
+      #arrow {
+        position: fixed;
+        z-index: -1;
+        left: 20vw;
+        top: 30vh;
+        width: 60vw;
+        height: 40vh;
+        background: #fff;
+        clip-path: polygon(50% 0, 100% 40%, 70% 40%, 70% 100%, 30% 100%, 30% 40%, 0 40%);
       }
       #code {
         margin: 0 0 1.5rem;
@@ -47,6 +57,7 @@
     </style>
   </head>
   <body>
+    <div id="arrow"></div>
     <h1 id="code"></h1>
 
     <form id="form">
