@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>Remote Device Orientation Receiver</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 1rem;
+        background: #000;
+        color: #fff;
+        font-family: monospace;
+      }
+      #code {
+        margin: 0 0 1.5rem;
+        font-size: 3rem;
+        text-align: center;
+      }
+      .client {
+        margin-bottom: 1rem;
+        overflow-wrap: anywhere;
+      }
+      .values {
+        font-size: 1.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="code"></h1>
+    <div id="clients"></div>
+
+    <script>
+      const code = String(Math.floor(Math.random() * 10000)).padStart(4, "0");
+      const channel = `remote-device-orientation-${code}`;
+      const url = `wss://broadcast.marinm.net/?channel=${channel}`;
+      const RETRY_MS = 3000;
+
+      const clientsElement = document.getElementById("clients");
+      const valuesElements = new Map();
+      let ownId = null;
+
+      document.getElementById("code").textContent = code;
+
+      function addClient(id) {
+        const element = document.createElement("div");
+        element.className = "client";
+        const title = document.createElement("div");
+        title.textContent = id;
+        const values = document.createElement("div");
+        values.className = "values";
+        element.append(title, values);
+        clientsElement.append(element);
+        valuesElements.set(id, values);
+      }
+
+      function removeClient(id) {
+        valuesElements.get(id).parentElement.remove();
+        valuesElements.delete(id);
+      }
+
+      function updatePresent(present) {
+        for (const id of valuesElements.keys()) {
+          if (!present.includes(id)) removeClient(id);
+        }
+        for (const id of present) {
+          if (id !== ownId && !valuesElements.has(id)) addClient(id);
+        }
+      }
+
+      function isOrientation(data) {
+        return (
+          data !== null &&
+          typeof data === "object" &&
+          ["alpha", "beta", "gamma"].every((key) => typeof data[key] === "number")
+        );
+      }
+
+      function handleMessage(message) {
+        if (message.from === "server") {
+          ownId = message.connection_id;
+          if (Array.isArray(message.data?.present)) {
+            updatePresent(message.data.present);
+          }
+          return;
+        }
+        const values = valuesElements.get(message.from);
+        if (values && isOrientation(message.data)) {
+          const { alpha, beta, gamma } = message.data;
+          values.textContent = `${alpha}, ${beta}, ${gamma}`;
+        }
+      }
+
+      function connect() {
+        const socket = new WebSocket(url);
+        socket.onmessage = (event) => {
+          try {
+            handleMessage(JSON.parse(event.data));
+          } catch {
+            // Ignore invalid messages
+          }
+        };
+        socket.onclose = () => {
+          updatePresent([]);
+          setTimeout(connect, RETRY_MS);
+        };
+      }
+
+      connect();
+    </script>
+  </body>
+</html>

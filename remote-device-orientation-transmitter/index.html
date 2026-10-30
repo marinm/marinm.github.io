@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>Remote Device Orientation Transmitter</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 1rem;
+        background: #000;
+        color: #fff;
+        font-family: monospace;
+        text-align: center;
+      }
+      #code {
+        margin: 0 0 1.5rem;
+        font-size: 3rem;
+      }
+      input,
+      button {
+        font: inherit;
+        font-size: 1.5rem;
+        color: #fff;
+        background: #000;
+        border: 1px solid #fff;
+        padding: 0.5rem 1rem;
+      }
+      input {
+        width: 6ch;
+        text-align: center;
+      }
+      a {
+        color: #fff;
+        font-size: 1.25rem;
+      }
+      [hidden] {
+        display: none;
+      }
+      #status,
+      #values {
+        margin: 1rem 0;
+        font-size: 1.25rem;
+        overflow-wrap: anywhere;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="code"></h1>
+
+    <form id="form">
+      <input
+        id="input"
+        type="text"
+        inputmode="numeric"
+        pattern="[0-9]{4}"
+        maxlength="4"
+        placeholder="0000"
+        autocomplete="off"
+        required
+      />
+      <button type="submit">Connect</button>
+    </form>
+
+    <div id="status"></div>
+    <a id="permission" href="#" hidden>Tap to allow device orientation</a>
+    <div id="values"></div>
+
+    <script>
+      const RETRY_MS = 3000;
+      const SEND_MS = 100;
+
+      const form = document.getElementById("form");
+      const input = document.getElementById("input");
+      const statusElement = document.getElementById("status");
+      const permissionLink = document.getElementById("permission");
+      const valuesElement = document.getElementById("values");
+
+      let socket = null;
+      let sample = null;
+
+      function connect(url) {
+        statusElement.textContent = "Connecting…";
+        socket = new WebSocket(url);
+        socket.onopen = () => {
+          statusElement.textContent = "Connected";
+          if (!listening) permissionLink.hidden = false;
+        };
+        socket.onclose = () => {
+          statusElement.textContent = "Connecting…";
+          setTimeout(() => connect(url), RETRY_MS);
+        };
+      }
+
+      let listening = false;
+
+      function startTransmitting() {
+        listening = true;
+        permissionLink.hidden = true;
+        window.addEventListener("deviceorientation", (event) => {
+          const { alpha, beta, gamma } = event;
+          if (alpha === null || beta === null || gamma === null) return;
+          sample = { alpha, beta, gamma };
+        });
+        setInterval(() => {
+          if (!sample) return;
+          valuesElement.textContent = `${sample.alpha}, ${sample.beta}, ${sample.gamma}`;
+          if (socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify({ data: sample }));
+          }
+        }, SEND_MS);
+      }
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const code = input.value.trim();
+        if (!/^\d{4}$/.test(code)) return;
+        form.hidden = true;
+        document.getElementById("code").textContent = code;
+        connect(`wss://broadcast.marinm.net/?channel=remote-device-orientation-${code}`);
+      });
+
+      permissionLink.addEventListener("click", async (event) => {
+        event.preventDefault();
+        try {
+          const result =
+            typeof DeviceOrientationEvent.requestPermission === "function"
+              ? await DeviceOrientationEvent.requestPermission()
+              : "granted";
+          if (result !== "granted") throw new Error(result);
+          startTransmitting();
+        } catch {
+          permissionLink.textContent = "Permission not granted";
+        }
+      });
+    </script>
+  </body>
+</html>
