@@ -29,6 +29,7 @@
         --width: 120px;
         --height: 253px;
         --depth: 8px;
+        --radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -49,8 +50,10 @@
         position: absolute;
       }
       .front,
-      .back {
+      .back,
+      .edge {
         inset: 0;
+        border-radius: var(--radius);
       }
       .front {
         background: green;
@@ -70,31 +73,8 @@
         background: #333;
         transform: rotateY(180deg) translateZ(calc(var(--depth) / 2));
       }
-      .left,
-      .right {
-        width: var(--depth);
-        height: var(--height);
-        left: calc(50% - var(--depth) / 2);
+      .edge {
         background: gray;
-      }
-      .left {
-        transform: rotateY(-90deg) translateZ(calc(var(--width) / 2));
-      }
-      .right {
-        transform: rotateY(90deg) translateZ(calc(var(--width) / 2));
-      }
-      .top,
-      .bottom {
-        width: var(--width);
-        height: var(--depth);
-        top: calc(50% - var(--depth) / 2);
-        background: gray;
-      }
-      .top {
-        transform: rotateX(90deg) translateZ(calc(var(--height) / 2));
-      }
-      .bottom {
-        transform: rotateX(-90deg) translateZ(calc(var(--height) / 2));
       }
     </style>
   </head>
@@ -107,12 +87,19 @@
       const channel = `remote-device-orientation-${code}`;
       const url = `wss://broadcast.marinm.net/?channel=${channel}`;
       const RETRY_MS = 3000;
+      const EDGE_SLICES = 15;
 
       const clientsElement = document.getElementById("clients");
       const clients = new Map();
       let ownId = null;
 
       document.getElementById("code").textContent = code;
+
+      function createFace(className) {
+        const face = document.createElement("div");
+        face.className = className;
+        return face;
+      }
 
       function addClient(id) {
         const element = document.createElement("div");
@@ -125,10 +112,13 @@
         scene.className = "scene";
         const phone = document.createElement("div");
         phone.className = "phone";
-        for (const name of ["front", "back", "left", "right", "top", "bottom"]) {
-          const face = document.createElement("div");
-          face.className = name;
-          phone.append(face);
+        phone.append(createFace("front"), createFace("back"));
+        // Stacked slices between front and back form the rounded edge
+        for (let i = 1; i <= EDGE_SLICES; i++) {
+          const slice = createFace("edge");
+          const offset = i / (EDGE_SLICES + 1) - 0.5;
+          slice.style.transform = `translateZ(calc(var(--depth) * ${offset}))`;
+          phone.append(slice);
         }
         const camera = document.createElement("div");
         camera.className = "camera";
