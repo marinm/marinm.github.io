@@ -1,0 +1,17 @@
+{
+	"name": "Camera",
+	"short_name": "Camera",
+	"display": "fullscreen",
+	"description": "Full screen camera",
+	"theme_color": "#000000",
+	"background_color": "#000000",
+	"start_url": "/camera/",
+	"scope": "/camera/",
+	"icons": [
+		{
+			"src": "/icon.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	]
+}
