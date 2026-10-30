@@ -95,17 +95,28 @@
 
       let listening = false;
 
+      function round(value) {
+        return Number(value.toFixed(1));
+      }
+
       function startTransmitting() {
         listening = true;
         permissionLink.hidden = true;
         window.addEventListener("deviceorientation", (event) => {
           const { alpha, beta, gamma } = event;
           if (alpha === null || beta === null || gamma === null) return;
-          sample = { alpha, beta, gamma };
+          sample = {
+            alpha: round(alpha),
+            beta: round(beta),
+            gamma: round(gamma),
+          };
         });
         setInterval(() => {
           if (!sample) return;
-          valuesElement.textContent = `${sample.alpha}, ${sample.beta}, ${sample.gamma}`;
+          const { alpha, beta, gamma } = sample;
+          valuesElement.textContent = [alpha, beta, gamma]
+            .map((value) => value.toFixed(1))
+            .join(", ");
           if (socket.readyState === WebSocket.OPEN) {
             socket.send(JSON.stringify({ data: sample }));
           }

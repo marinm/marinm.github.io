@@ -22,6 +22,6 @@ The page listens for messages of this form from clients:
 
 Any messages that don't follow this form are silently ignored.
 
-When a valid client message arrives, the page should print just the values in comman separated format under the client's UUID.
+When a valid client message arrives, the page should print just the values in comman separated format under the client's UUID. The values should be formatted to a fixed 1 decimal point.
 
 Before building, ask me questions to clarify.

@@ -88,7 +88,9 @@
         const values = valuesElements.get(message.from);
         if (values && isOrientation(message.data)) {
           const { alpha, beta, gamma } = message.data;
-          values.textContent = `${alpha}, ${beta}, ${gamma}`;
+          values.textContent = [alpha, beta, gamma]
+            .map((value) => value.toFixed(1))
+            .join(", ");
         }
       }
 

@@ -21,6 +21,8 @@ If permission is granted, the device immediately starts sending transmitting its
 
 (nested in a `data` key).
 
+The values should be formatted to a fixed 1 decimal point.
+
 The device should transmit these events at an even cadence of every 100 ms. Since local device orientation events will likely fire more requently, the page should simply sample these and send the last sampled value.
 
 Finally, add an entry to the parent index.html
