@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Microphone Waveform</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: #000;
+      color: #fff;
+      font-family: sans-serif;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #message {
+      text-align: center;
+      cursor: pointer;
+    }
+
+    #waveforms {
+      display: none;
+      width: 100%;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 4em;
+    }
+  </style>
+</head>
+<body>
+  <div id="message">Tap to allow microphone</div>
+  <div id="waveforms">
+    <canvas id="oscilloscope"></canvas>
+    <canvas id="history"></canvas>
+  </div>
+
+  <script>
+    const message = document.getElementById("message");
+    const waveforms = document.getElementById("waveforms");
+    const oscilloscope = document.getElementById("oscilloscope");
+    const historyCanvas = document.getElementById("history");
+
+    const historySpacing = 6;
+
+    let starting = false;
+
+    document.body.addEventListener("click", async () => {
+      if (starting || waveforms.style.display === "block") return;
+      starting = true;
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        listen(stream);
+      } catch {
+        message.textContent = "Permission not granted";
+      }
+      starting = false;
+    });
+
+    // Match the canvas pixel size to its displayed size and return a
+    // context ready for drawing a white line.
+    function prepare(canvas) {
+      const scale = window.devicePixelRatio || 1;
+      const width = Math.round(canvas.clientWidth * scale);
+      const height = Math.round(canvas.clientHeight * scale);
+      if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+      }
+      const context = canvas.getContext("2d");
+      context.clearRect(0, 0, width, height);
+      context.strokeStyle = "#fff";
+      context.lineWidth = 2 * scale;
+      return { context, width, height, scale };
+    }
+
+    function drawOscilloscope(samples) {
+      const { context, width, height } = prepare(oscilloscope);
+      context.beginPath();
+      samples.forEach((sample, i) => {
+        const x = (i / (samples.length - 1)) * width;
+        const y = (sample / 255) * height;
+        if (i === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
+      });
+      context.stroke();
+    }
+
+    function drawHistory(levels) {
+      const { context, width, height, scale } = prepare(historyCanvas);
+      const capacity = Math.ceil(width / (historySpacing * scale));
+      while (levels.length > capacity) levels.shift();
+
+      context.beginPath();
+      levels.forEach((level, i) => {
+        const x = width - (levels.length - i) * historySpacing * scale;
+        const half = Math.max((level * height) / 2, scale);
+        context.moveTo(x, height / 2 - half);
+        context.lineTo(x, height / 2 + half);
+      });
+      context.stroke();
+    }
+
+    function peak(samples) {
+      let max = 0;
+      for (const sample of samples) {
+        max = Math.max(max, Math.abs(sample - 128) / 128);
+      }
+      return max;
+    }
+
+    function listen(stream) {
+      const audioContext = new AudioContext();
+      const analyser = audioContext.createAnalyser();
+      audioContext.createMediaStreamSource(stream).connect(analyser);
+      const samples = new Uint8Array(analyser.fftSize);
+      const levels = [];
+
+      message.style.display = "none";
+      waveforms.style.display = "block";
+
+      function frame() {
+        analyser.getByteTimeDomainData(samples);
+        levels.push(peak(samples));
+        drawOscilloscope(samples);
+        drawHistory(levels);
+        requestAnimationFrame(frame);
+      }
+      frame();
+    }
+  </script>
+</body>
+</html>
