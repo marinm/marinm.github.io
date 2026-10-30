@@ -25,6 +25,67 @@
       .values {
         font-size: 1.25rem;
       }
+      .scene {
+        --width: 120px;
+        --height: 253px;
+        --depth: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 320px;
+        perspective: 800px;
+      }
+      .camera {
+        transform-style: preserve-3d;
+        transform: rotateX(45deg);
+      }
+      .phone {
+        position: relative;
+        width: var(--width);
+        height: var(--height);
+        transform-style: preserve-3d;
+      }
+      .phone div {
+        position: absolute;
+      }
+      .front,
+      .back {
+        inset: 0;
+      }
+      .front {
+        background: green;
+        transform: translateZ(calc(var(--depth) / 2));
+      }
+      .back {
+        background: red;
+        transform: rotateY(180deg) translateZ(calc(var(--depth) / 2));
+      }
+      .left,
+      .right {
+        width: var(--depth);
+        height: var(--height);
+        left: calc(50% - var(--depth) / 2);
+        background: gray;
+      }
+      .left {
+        transform: rotateY(-90deg) translateZ(calc(var(--width) / 2));
+      }
+      .right {
+        transform: rotateY(90deg) translateZ(calc(var(--width) / 2));
+      }
+      .top,
+      .bottom {
+        width: var(--width);
+        height: var(--depth);
+        top: calc(50% - var(--depth) / 2);
+        background: gray;
+      }
+      .top {
+        transform: rotateX(90deg) translateZ(calc(var(--height) / 2));
+      }
+      .bottom {
+        transform: rotateX(-90deg) translateZ(calc(var(--height) / 2));
+      }
     </style>
   </head>
   <body>
@@ -38,7 +99,7 @@
       const RETRY_MS = 3000;
 
       const clientsElement = document.getElementById("clients");
-      const valuesElements = new Map();
+      const clients = new Map();
       let ownId = null;
 
       document.getElementById("code").textContent = code;
@@ -50,22 +111,35 @@
         title.textContent = id;
         const values = document.createElement("div");
         values.className = "values";
-        element.append(title, values);
+        const scene = document.createElement("div");
+        scene.className = "scene";
+        const phone = document.createElement("div");
+        phone.className = "phone";
+        for (const name of ["front", "back", "left", "right", "top", "bottom"]) {
+          const face = document.createElement("div");
+          face.className = name;
+          phone.append(face);
+        }
+        const camera = document.createElement("div");
+        camera.className = "camera";
+        camera.append(phone);
+        scene.append(camera);
+        element.append(title, values, scene);
         clientsElement.append(element);
-        valuesElements.set(id, values);
+        clients.set(id, { element, values, phone });
       }
 
       function removeClient(id) {
-        valuesElements.get(id).parentElement.remove();
-        valuesElements.delete(id);
+        clients.get(id).element.remove();
+        clients.delete(id);
       }
 
       function updatePresent(present) {
-        for (const id of valuesElements.keys()) {
+        for (const id of clients.keys()) {
           if (!present.includes(id)) removeClient(id);
         }
         for (const id of present) {
-          if (id !== ownId && !valuesElements.has(id)) addClient(id);
+          if (id !== ownId && !clients.has(id)) addClient(id);
         }
       }
 
@@ -85,12 +159,14 @@
           }
           return;
         }
-        const values = valuesElements.get(message.from);
-        if (values && isOrientation(message.data)) {
+        const client = clients.get(message.from);
+        if (client && isOrientation(message.data)) {
           const { alpha, beta, gamma } = message.data;
-          values.textContent = [alpha, beta, gamma]
+          client.values.textContent = [alpha, beta, gamma]
             .map((value) => value.toFixed(1))
             .join(", ");
+          // W3C order Rz(alpha) Rx(beta) Ry(gamma), with CSS's y axis pointing down
+          client.phone.style.transform = `rotateZ(${-alpha}deg) rotateX(${-beta}deg) rotateY(${gamma}deg)`;
         }
       }
 

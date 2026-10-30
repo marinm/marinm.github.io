@@ -24,4 +24,8 @@ Any messages that don't follow this form are silently ignored.
 
 When a valid client message arrives, the page should print just the values in comman separated format under the client's UUID. The values should be formatted to a fixed 1 decimal point.
 
+Under the values I'd also like to display a simple 3d rendering of the alpha/beta/gamma (yaw/pitch/roll) values. The object being rotated will imitate a phone: a rectangle with a slight thickness. The front of the phone will be a green rectangle face and the back of the phone will be a red rectangle phone. The edges should be gray.
+
+Each client gets its own 3d rendering.
+
 Before building, ask me questions to clarify.
