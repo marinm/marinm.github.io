@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Device Motion Event</title>
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: black;
+    color: white;
+  }
+  table {
+    table-layout: fixed;
+    width: 28em;
+    max-width: 100%;
+    border-collapse: collapse;
+  }
+  td {
+    padding: 0.25em;
+    overflow-wrap: anywhere;
+  }
+  td + td {
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+<div id="root">Tap to enable motion events</div>
+
+<script>
+  const root = document.getElementById("root");
+  const THROTTLE_MS = 100;
+
+  const rows = {
+    "acceleration": (e) => vector(e.acceleration),
+    "accelerationIncludingGravity": (e) => vector(e.accelerationIncludingGravity),
+    "rotationRate (alpha)": (e) => number(e.rotationRate && e.rotationRate.alpha),
+    "rotationRate (beta)": (e) => number(e.rotationRate && e.rotationRate.beta),
+    "rotationRate (gamma)": (e) => number(e.rotationRate && e.rotationRate.gamma),
+    "interval": (e) => number(e.interval),
+  };
+
+  function number(value) {
+    return typeof value === "number" ? value.toFixed(2) : "";
+  }
+
+  function vector(v) {
+    if (!v) return "";
+    return [v.x, v.y, v.z].map(number).join(", ");
+  }
+
+  async function requestPermission() {
+    if (typeof DeviceMotionEvent === "undefined") return false;
+    if (typeof DeviceMotionEvent.requestPermission !== "function") return true;
+    try {
+      return (await DeviceMotionEvent.requestPermission()) === "granted";
+    } catch {
+      return false;
+    }
+  }
+
+  function showTable() {
+    const table = document.createElement("table");
+    const cells = {};
+    for (const key of Object.keys(rows)) {
+      const row = table.insertRow();
+      row.insertCell().textContent = key;
+      cells[key] = row.insertCell();
+    }
+    root.replaceChildren(table);
+
+    let last = 0;
+    window.addEventListener("devicemotion", (event) => {
+      const now = performance.now();
+      if (now - last < THROTTLE_MS) return;
+      last = now;
+      for (const [key, format] of Object.entries(rows)) {
+        cells[key].textContent = format(event);
+      }
+    });
+  }
+
+  document.body.addEventListener("click", async () => {
+    if (await requestPermission()) {
+      showTable();
+    } else {
+      root.textContent = "Permission not granted";
+    }
+  }, { once: true });
+</script>
+</body>
+</html>
