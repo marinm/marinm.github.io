@@ -2,13 +2,13 @@
 
 Make this file a single, self-contained web page with zero external dependencies. It is meant for mobile use but should also work on any screen size.
 
-The page is a black background with default-size white text in the center of the screen.
+The page is a black background with default-size sans-serif white text in the center of the screen.
 
 First the screen displays "Tap to enable motion events", which when tapped requests the browser for permissions for 'motionevent'.
 
 If permission is not granted, the label changes to "Permission not granted".
 
-If permission is granted, the label changes to a fixed-size table. The left column shows all main the keys that motionevent provides. The right column shows all the values, right-aligned.
+If permission is granted, the label changes to a table. The left column shows all main the keys that motionevent provides. The right column shows all the values, right-aligned.
 
 Here are the keys I'm thinking of:
 
@@ -19,7 +19,7 @@ Here are the keys I'm thinking of:
 - `rotationRate (gamma)`
 - `interval`
 
-The table should have no borders.
+The table should have no borders. It should fit entirely on a mobile screen and should not shift size or layout when the event values change.
 
 Do not add any other text on the screen.
 
