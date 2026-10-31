@@ -47,9 +47,7 @@
   const rows = {
     "acceleration": (e) => vector(e.acceleration),
     "accelerationIncludingGravity": (e) => vector(e.accelerationIncludingGravity),
-    "rotationRate (alpha)": (e) => number(e.rotationRate && e.rotationRate.alpha),
-    "rotationRate (beta)": (e) => number(e.rotationRate && e.rotationRate.beta),
-    "rotationRate (gamma)": (e) => number(e.rotationRate && e.rotationRate.gamma),
+    "rotationRate": (e) => rotation(e.rotationRate),
     "interval": (e) => number(e.interval),
   };
 
@@ -60,6 +58,11 @@
   function vector(v) {
     if (!v) return "";
     return [v.x, v.y, v.z].map(number).join(", ");
+  }
+
+  function rotation(r) {
+    if (!r) return "";
+    return [r.alpha, r.beta, r.gamma].map(number).join(", ");
   }
 
   async function requestPermission() {

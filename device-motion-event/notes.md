@@ -14,9 +14,7 @@ Here are the keys I'm thinking of:
 
 - `acceleration`
 - `accelerationIncludingGravity`
-- `rotationRate (alpha)`
-- `rotationRate (beta)`
-- `rotationRate (gamma)`
+- `rotationRate`
 - `interval`
 
 The table should have no borders. It should fit entirely on a mobile screen and should not shift size or layout when the event values change.
