@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: black;
+      color: white;
+      font-family: sans-serif;
+      font-size: 15vmin;
+      font-variant-numeric: tabular-nums;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      cursor: pointer;
+    }
+
+    body.set {
+      background: green;
+    }
+
+    body.rest {
+      background: blue;
+    }
+  </style>
+</head>
+
+<body>
+  <span id="label">Tap to start</span>
+
+  <script>
+    const SETS = 6;
+    const SET_SECONDS = 30;
+    const REST_SECONDS = 60;
+
+    const phases = [];
+    for (let i = 0; i < SETS; i++) {
+      if (i > 0) phases.push({ name: "rest", seconds: REST_SECONDS });
+      phases.push({ name: "set", seconds: SET_SECONDS });
+    }
+
+    const label = document.getElementById("label");
+    let audio;
+    let wakeLock;
+    let started = false;
+    let running = false;
+    let elapsed = 0; // ms, excludes paused time
+    let lastTick = 0;
+    let phaseIndex = 0;
+
+    function beep() {
+      const oscillator = audio.createOscillator();
+      oscillator.connect(audio.destination);
+      oscillator.start();
+      oscillator.stop(audio.currentTime + 0.2);
+    }
+
+    async function requestWakeLock() {
+      try {
+        wakeLock = await navigator.wakeLock.request("screen");
+      } catch { }
+    }
+
+    function releaseWakeLock() {
+      wakeLock?.release();
+      wakeLock = null;
+    }
+
+    function format(seconds) {
+      const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
+      const ss = String(seconds % 60).padStart(2, "0");
+      return `${mm}:${ss}`;
+    }
+
+    function phaseStart(index) {
+      return phases.slice(0, index).reduce((sum, p) => sum + p.seconds * 1000, 0);
+    }
+
+    function render() {
+      const phase = phases[phaseIndex];
+      const remaining = phaseStart(phaseIndex) + phase.seconds * 1000 - elapsed;
+      document.body.className = phase.name;
+      label.textContent = format(Math.ceil(remaining / 1000));
+    }
+
+    function finish() {
+      running = false;
+      document.body.className = "";
+      label.textContent = "Refresh to reset";
+      releaseWakeLock();
+    }
+
+    function tick(now) {
+      if (!running) return;
+      elapsed += now - lastTick;
+      lastTick = now;
+
+      while (phaseIndex < phases.length && elapsed >= phaseStart(phaseIndex + 1)) {
+        phaseIndex++;
+        beep();
+      }
+
+      if (phaseIndex === phases.length) return finish();
+      render();
+      requestAnimationFrame(tick);
+    }
+
+    function toggle() {
+      if (phaseIndex === phases.length) return;
+
+      if (!started) {
+        started = true;
+        audio = new AudioContext();
+      }
+
+      running = !running;
+      if (running) {
+        lastTick = performance.now();
+        requestWakeLock();
+        render();
+        requestAnimationFrame(tick);
+      } else {
+        releaseWakeLock();
+      }
+    }
+
+    document.body.addEventListener("click", toggle);
+    document.addEventListener("visibilitychange", () => {
+      if (running && document.visibilityState === "visible") requestWakeLock();
+    });
+  </script>
+</body>
+
+</html>
