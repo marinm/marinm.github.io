@@ -19,6 +19,8 @@ Here are the keys I'm thinking of:
 
 The table should have no borders. It should fit entirely on a mobile screen and should not shift size or layout when the event values change.
 
+Display all values in a fixed format rounded to 1 decimal place.
+
 Do not add any other text on the screen.
 
 Finally, add an entry to the parent index.html page.
